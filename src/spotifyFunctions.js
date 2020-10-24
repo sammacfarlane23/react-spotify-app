@@ -7,7 +7,10 @@ let globalAccessToken = '';
 
 export function redirectUrlToSpotifyForLogin() {
   const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-  const REDIRECT_URI = process.env.REACT_APP_SPOTIFY_DEVELOPMENT_REDIRECT_URI;
+  const REDIRECT_URI =
+    process.env.NODE_ENV === 'production'
+      ? process.env.REACT_APP_SPOTIFY_PRODUCTION_REDIRECT_URI
+      : process.env.REACT_APP_SPOTIFY_DEVELOPMENT_REDIRECT_URI;
   const scopes = [
     'user-read-private',
     'user-read-email',
