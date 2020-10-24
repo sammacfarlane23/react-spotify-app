@@ -1,0 +1,32 @@
+.btn {
+  background-color: $spotify-green;
+  border-color: $spotify-green;
+  &:hover {
+    background-color: lighten($spotify-green, 10%);
+    border-color: white;
+  }
+  &:focus {
+    color: black;
+    background-color: white;
+    outline-color: none;
+    border-color: white;
+  }
+  &:active {
+    color: black;
+    background-color: white;
+    border-color: white;
+    outline: none;
+  }
+}
+
+.active-button {
+  color: black;
+  background-color: white;
+  border-color: white;
+}
+
+.btn:focus,
+.btn:active {
+  outline: none !important;
+  box-shadow: none;
+}

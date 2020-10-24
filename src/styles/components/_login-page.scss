@@ -1,0 +1,37 @@
+.login-page {
+  background-image: url('../../login-image-3.jpg');
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-page__box {
+  background: hsla(0, 0%, 100%, 0.95);
+  box-shadow: 0px 10px 20px 0px rgba(50, 50, 50, 0.52);
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 18rem;
+  padding: 32px 16px;
+  h1 {
+    color: $spotify-green;
+  }
+  p {
+    color: black;
+    text-align: center;
+  }
+}
+
+.card-body {
+  padding: 15px 20px;
+}
+
+.card-title {
+  font-size: 32px;
+  font-weight: 700;
+}
