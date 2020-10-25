@@ -17,21 +17,13 @@ export default ({ item, index, src }) => {
 
   return (
     <div
-      className='d-flex flex-column justify-content-center align-items-center'
+      className='item-image'
       onMouseEnter={() => setIsArtistNameShown(true)}
       onMouseLeave={() => setIsArtistNameShown(false)}
-      style={{
-        backgroundImage: `url(${src})`,
-        backgroundSize: 'cover',
-        width: '150px',
-        height: '150px',
-      }}
+      style={{ backgroundImage: `url(${src})` }}
     >
       {isArtistNameShown && (
-        <p
-          className='text-center py-1 px-2'
-          style={{ background: 'black', color: 'white', borderRadius: '5px' }}
-        >
+        <p className='item-image__text'>
           {index + 1}. {item.name} {item.artists && `by ${getArtistsList()}`}
         </p>
       )}

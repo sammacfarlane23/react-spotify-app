@@ -1,0 +1,17 @@
+.item-image {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-size: cover;
+  width: 150px;
+  height: 150px;
+}
+
+.item-image__text {
+  text-align: center;
+  padding: 0.25rem 1rem;
+  background: black;
+  color: white;
+  border-radius: 5px;
+}
