@@ -1,14 +1,14 @@
 import React from 'react';
-import TrackImage from './TrackImage';
+import ItemImage from './ItemImage';
 
 export default ({ topTracks }) => {
   return (
     <div className='d-flex flex-row flex-wrap justify-content-center'>
       {topTracks.map((topTrack, index) => (
         <>
-          <TrackImage
+          <ItemImage
             key={topTrack.id}
-            topTrack={topTrack}
+            item={topTrack}
             index={index}
             src={topTrack.album.images[0].url}
           />

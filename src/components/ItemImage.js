@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
 
-export default ({ topArtist, index, src }) => {
+export default ({ item, index, src }) => {
   const [isArtistNameShown, setIsArtistNameShown] = useState(false);
+
+  const getArtistsList = () => {
+    let artistString = '';
+    item.artists.forEach((artist, index) => {
+      if (index > 0) {
+        artistString += `, ${artist.name}`;
+      } else {
+        artistString += artist.name;
+      }
+    });
+    return artistString;
+  };
 
   return (
     <div
@@ -20,7 +32,7 @@ export default ({ topArtist, index, src }) => {
           className='text-center py-1 px-2'
           style={{ background: 'black', color: 'white', borderRadius: '5px' }}
         >
-          {index + 1}. {topArtist.name}
+          {index + 1}. {item.name} {item.artists && `by ${getArtistsList()}`}
         </p>
       )}
     </div>

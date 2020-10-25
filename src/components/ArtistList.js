@@ -1,14 +1,14 @@
 import React from 'react';
-import ArtistImage from './ArtistImage';
+import ItemImage from './ItemImage';
 
 export default ({ topArtists }) => {
   return (
     <div className='d-flex flex-row flex-wrap justify-content-center'>
       {topArtists.map((topArtist, index) => (
         <>
-          <ArtistImage
+          <ItemImage
             key={topArtist.id}
-            topArtist={topArtist}
+            item={topArtist}
             index={index}
             src={topArtist.images[0].url}
           />
