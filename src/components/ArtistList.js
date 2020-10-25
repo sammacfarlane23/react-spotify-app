@@ -3,7 +3,7 @@ import ArtistImage from './ArtistImage';
 
 export default ({ topArtists }) => {
   return (
-    <div className='d-flex flex-row flex-wrap'>
+    <div className='d-flex flex-row flex-wrap justify-content-center'>
       {topArtists.map((topArtist, index) => (
         <>
           <ArtistImage

@@ -1,11 +1,14 @@
 .login-page {
-  background-image: url('../../login-image-3.jpg');
+  background-image: url('../../login-image-mobile.jpg');
   background-size: cover;
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  @media (min-width: 45rem) {
+    background-image: url('../../login-image-desktop.jpg');
+  }
 }
 
 .login-page__box {
@@ -19,7 +22,8 @@
   width: 18rem;
   padding: 32px 16px;
   h1 {
-    color: $spotify-green;
+    color: black;
+    font-weight: 700;
   }
   p {
     color: black;
@@ -27,11 +31,10 @@
   }
 }
 
-.card-body {
-  padding: 15px 20px;
-}
-
-.card-title {
-  font-size: 32px;
-  font-weight: 700;
+.login-page__credit {
+  color: white !important;
+  position: absolute;
+  bottom: 0;
+  color: white;
+  font-size: 10px;
 }

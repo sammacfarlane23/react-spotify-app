@@ -30,7 +30,12 @@ export default ({ topTrack, index, src }) => {
       {isArtistNameShown && (
         <p
           className='text-center py-1 px-2'
-          style={{ background: 'black', color: 'white', borderRadius: '5px' }}
+          style={{
+            background: 'black',
+            color: 'white',
+            borderRadius: '5px',
+            fontSize: '12px',
+          }}
         >
           {index + 1}. {topTrack.name} by {getArtistsList()}
         </p>

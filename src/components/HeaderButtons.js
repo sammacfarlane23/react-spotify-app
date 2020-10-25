@@ -27,9 +27,9 @@ export default ({ getTopTracks, getTopArtists }) => {
           Top Artists
         </Button>
       </Row>
-      <Row className='justify-content-center'>
+      <Row className='justify-content-center align-items-space-between'>
         <Button
-          className={`btn mr-2 ${
+          className={`btn mr-2 mb-2 ${
             timeFrame === 'long_term' ? 'active-button' : ''
           }`}
           onClick={() => {
@@ -42,7 +42,7 @@ export default ({ getTopTracks, getTopArtists }) => {
           All Time
         </Button>
         <Button
-          className={`btn mr-2 ${
+          className={`btn mr-2 mb-2 ${
             timeFrame === 'medium_term' ? 'active-button' : ''
           }`}
           onClick={() => {
@@ -55,7 +55,7 @@ export default ({ getTopTracks, getTopArtists }) => {
           Last Six Months
         </Button>
         <Button
-          className={`btn mr-2 ${
+          className={`btn mr-2 mb-2 ${
             timeFrame === 'short_term' ? 'active-button' : ''
           }`}
           onClick={() => {
