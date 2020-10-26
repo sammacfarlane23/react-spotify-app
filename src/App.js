@@ -124,7 +124,7 @@ const App = () => {
           {timeFrameMessage && (
             <h1 className='my-4'>
               {timeFrameMessage}
-              <button className='icon-button ml-1' onClick={openModal}>
+              <button className='icon-button' onClick={openModal}>
                 <FontAwesomeIcon icon={faEllipsisH} />
               </button>
             </h1>
