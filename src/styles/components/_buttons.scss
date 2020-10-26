@@ -3,7 +3,7 @@
   border-color: $spotify-green;
   &:hover {
     background-color: lighten($spotify-green, 10%);
-    border-color: white;
+    border-color: $spotify-green;
   }
   &:focus {
     color: black;
@@ -23,10 +23,26 @@
   color: black;
   background-color: white;
   border-color: white;
+  &:hover {
+    background-color: white;
+    color: black;
+    border-color: white;
+  }
 }
 
 .btn:focus,
 .btn:active {
+  background-color: white;
   outline: none !important;
   box-shadow: none;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active {
+  background-color: white;
+  border-color: white;
+  color: black;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active:focus {
+  box-shadow: 0 0 0 0.1rem white;
 }
