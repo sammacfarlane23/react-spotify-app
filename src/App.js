@@ -3,6 +3,10 @@ import SpotifyWebApi from 'spotify-web-api-js';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import Modal from 'react-modal';
 import './styles/App.scss';
 import { useConstructor } from './hooks/hooks';
 import LoginPage from './components/LoginPage';
@@ -20,11 +24,21 @@ const App = () => {
       spotifyApi.setAccessToken(token);
     }
   });
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [isTopTracks, setIsTopTracks] = useState(false);
   const [loggedIn] = useState(token ? true : false);
   const [topArtists, setTopArtists] = useState([]);
   const [topTracks, setTopTracks] = useState([]);
   const [timeFrameMessage, setTimeFrameMessage] = useState('');
+  const [timeFrame, setTimeFrame] = useState('short_term');
+
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
 
   function getHashParams() {
     var hashParams = {};
@@ -43,12 +57,15 @@ const App = () => {
     setIsTopTracks(false);
     switch (timeFrame) {
       case 'short_term':
+        setTimeFrame('short_term');
         setTimeFrameMessage('Your Top Artists From Last Four Weeks');
         break;
       case 'medium_term':
+        setTimeFrame('medium_term');
         setTimeFrameMessage('Your Top Artists From Last Six Months');
         break;
       case 'long_term':
+        setTimeFrame('long_term');
         setTimeFrameMessage('Your Top Artists of All Time');
         break;
       default:
@@ -69,12 +86,15 @@ const App = () => {
     setIsTopTracks(true);
     switch (timeFrame) {
       case 'short_term':
+        setTimeFrame('short_term');
         setTimeFrameMessage('Your Top Tracks From Last Four Weeks');
         break;
       case 'medium_term':
+        setTimeFrame('medium_term');
         setTimeFrameMessage('Your Top Tracks From Last Six Months');
         break;
       case 'long_term':
+        setTimeFrame('long_term');
         setTimeFrameMessage('Your Top Tracks of All Time');
         break;
       default:
@@ -99,17 +119,42 @@ const App = () => {
 
   return loggedIn ? (
     <Container className='min-vh-100'>
-      <Row className='justify-content-center flex-column'>
-        <Col xs={12} md={12} className='py-4'>
-          <HeaderButtons
-            isTopTracks={isTopTracks}
-            getTopTracks={getTopTracks}
-            getTopArtists={getTopArtists}
-          />
-          {timeFrameMessage && <h1 className='my-3'>{timeFrameMessage}</h1>}
+      <Row>
+        <Col xs={12}>
+          {timeFrameMessage && (
+            <h1 className='my-4'>
+              {timeFrameMessage}{' '}
+              <button className='icon-button' onClick={openModal}>
+                <FontAwesomeIcon icon={faEllipsisH} />
+              </button>
+            </h1>
+          )}
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={12}>
           <ItemList topList={isTopTracks ? topTracks : topArtists} />
         </Col>
       </Row>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        closeTimeoutMS={200}
+        contentLabel='Options Modal'
+        className='Modal'
+        ariaHideApp={false}
+      >
+        <button className='icon-button' onClick={closeModal}>
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
+        <HeaderButtons
+          closeModal={closeModal}
+          isTopTracks={isTopTracks}
+          timeFrame={timeFrame}
+          getTopTracks={getTopTracks}
+          getTopArtists={getTopArtists}
+        />
+      </Modal>
     </Container>
   ) : (
     <LoginPage />

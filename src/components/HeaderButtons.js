@@ -2,41 +2,52 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 
-const HeaderButtons = ({ getTopTracks, getTopArtists }) => {
-  const [isTopTracks, setIsTopTracks] = useState(false);
-  const [timeFrame, setTimeFrame] = useState('short_term');
+const HeaderButtons = ({
+  getTopTracks,
+  getTopArtists,
+  isTopTracks,
+  timeFrame,
+  closeModal,
+}) => {
+  const [isHeaderTopTracks, setIsHeaderTopTracks] = useState(isTopTracks);
+  const [headerTimeFrame, setHeaderTimeFrame] = useState(timeFrame);
   return (
     <>
       <Row className='justify-content-center'>
         <Button
-          className={`btn mr-2 mb-2 ${isTopTracks ? 'active-button' : ''}`}
+          className={`btn mr-2 mb-2 ${
+            isHeaderTopTracks ? 'active-button' : ''
+          }`}
           onClick={() => {
-            setIsTopTracks(true);
-            getTopTracks(timeFrame);
+            setIsHeaderTopTracks(true);
+            getTopTracks(headerTimeFrame);
           }}
         >
           Top Tracks
         </Button>
         <Button
-          className={`btn mr-2 mb-2 ${isTopTracks ? '' : 'active-button'}`}
+          className={`btn mr-2 mb-2 ${
+            isHeaderTopTracks ? '' : 'active-button'
+          }`}
           onClick={() => {
-            setIsTopTracks(false);
-            getTopArtists(timeFrame);
+            setIsHeaderTopTracks(false);
+            getTopArtists(headerTimeFrame);
           }}
         >
           Top Artists
         </Button>
       </Row>
-      <Row className='justify-content-center align-items-space-between'>
+      <Row className='justify-content-center align-items-space-between my-3'>
         <Button
           className={`btn mr-2 mb-2 ${
             timeFrame === 'long_term' ? 'active-button' : ''
           }`}
           onClick={() => {
-            setTimeFrame('long_term');
+            setHeaderTimeFrame('long_term');
             isTopTracks
               ? getTopTracks('long_term')
               : getTopArtists('long_term');
+            closeModal();
           }}
         >
           All Time
@@ -46,10 +57,11 @@ const HeaderButtons = ({ getTopTracks, getTopArtists }) => {
             timeFrame === 'medium_term' ? 'active-button' : ''
           }`}
           onClick={() => {
-            setTimeFrame('medium_term');
+            setHeaderTimeFrame('medium_term');
             isTopTracks
               ? getTopTracks('medium_term')
               : getTopArtists('medium_term');
+            closeModal();
           }}
         >
           Last Six Months
@@ -59,10 +71,11 @@ const HeaderButtons = ({ getTopTracks, getTopArtists }) => {
             timeFrame === 'short_term' ? 'active-button' : ''
           }`}
           onClick={() => {
-            setTimeFrame('short_term');
+            setHeaderTimeFrame('short_term');
             isTopTracks
               ? getTopTracks('short_term')
               : getTopArtists('short_term');
+            closeModal();
           }}
         >
           Last Four Weeks
