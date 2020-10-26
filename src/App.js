@@ -5,10 +5,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './styles/App.scss';
 import { useConstructor } from './hooks/hooks';
-import ArtistList from './components/ArtistList';
-import TrackList from './components/TrackList';
 import LoginPage from './components/LoginPage';
 import HeaderButtons from './components/HeaderButtons';
+import ItemList from './components/ItemList';
 
 const spotifyApi = new SpotifyWebApi();
 
@@ -52,6 +51,8 @@ const App = () => {
       case 'long_term':
         setTimeFrameMessage('Your Top Artists of All Time');
         break;
+      default:
+        setTimeFrameMessage('Top Artists');
     }
     spotifyApi.getMyTopArtists({ time_range: timeFrame }).then(
       (response) => {
@@ -76,6 +77,8 @@ const App = () => {
       case 'long_term':
         setTimeFrameMessage('Your Top Tracks of All Time');
         break;
+      default:
+        setTimeFrameMessage('Top Tracks');
     }
     spotifyApi.getMyTopTracks({ time_range: timeFrame }).then(
       (response) => {
@@ -104,11 +107,7 @@ const App = () => {
             getTopArtists={getTopArtists}
           />
           {timeFrameMessage && <h1 className='my-3'>{timeFrameMessage}</h1>}
-          {isTopTracks ? (
-            <TrackList topTracks={topTracks} />
-          ) : (
-            <ArtistList topArtists={topArtists} />
-          )}
+          <ItemList topList={isTopTracks ? topTracks : topArtists} />
         </Col>
       </Row>
     </Container>
