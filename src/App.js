@@ -123,7 +123,7 @@ const App = () => {
         <Col xs={12} className='px-4'>
           {timeFrameMessage && (
             <h1 className='my-4'>
-              {timeFrameMessage}
+              {timeFrameMessage}{' '}
               <button className='icon-button' onClick={openModal}>
                 <FontAwesomeIcon icon={faEllipsisH} />
               </button>
