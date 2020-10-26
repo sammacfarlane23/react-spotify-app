@@ -6,6 +6,10 @@
   background-size: cover;
   width: 150px;
   height: 150px;
+  margin: 0 0.3rem;
+  @media (min-width: 45rem) {
+    margin: 0;
+  }
 }
 
 .item-image__text {
@@ -14,4 +18,18 @@
   background: black;
   color: white;
   border-radius: 5px;
+  @media (max-width: 65rem) {
+    display: none;
+  }
+}
+
+.item-image__text--mobile {
+  padding: 0.5rem 0.5rem;
+  margin: 0;
+  max-width: 150px;
+  color: white;
+  text-align: center;
+  @media (min-width: 65rem) {
+    display: none;
+  }
 }

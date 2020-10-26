@@ -98,9 +98,9 @@ const App = () => {
   }, []);
 
   return loggedIn ? (
-    <Container>
+    <Container className='min-vh-100'>
       <Row className='justify-content-center flex-column'>
-        <Col xs={12} md={12} className='py-5'>
+        <Col xs={12} md={12} className='py-4'>
           <HeaderButtons
             isTopTracks={isTopTracks}
             getTopTracks={getTopTracks}

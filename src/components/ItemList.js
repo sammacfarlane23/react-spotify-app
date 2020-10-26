@@ -3,7 +3,7 @@ import ItemImage from './ItemImage';
 
 const ItemList = ({ topList }) => {
   return (
-    <div className='d-flex flex-row flex-wrap justify-content-center'>
+    <div className='d-flex flex-row flex-wrap justify-content-center align-items-space-between'>
       {topList.map((topItem, index) => (
         <ItemImage
           key={topItem.id}
