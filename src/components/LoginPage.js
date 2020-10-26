@@ -1,7 +1,7 @@
 import React from 'react';
 import { redirectUrlToSpotifyForLogin } from '../spotifyFunctions';
 
-export default () => {
+const LoginPage = () => {
   return (
     <div className='login-page'>
       <div className='login-page__box'>
@@ -15,3 +15,5 @@ export default () => {
     </div>
   );
 };
+
+export default LoginPage;

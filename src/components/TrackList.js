@@ -1,7 +1,7 @@
 import React from 'react';
 import ItemImage from './ItemImage';
 
-export default ({ topTracks }) => {
+const TrackList = ({ topTracks }) => {
   return (
     <div className='d-flex flex-row flex-wrap justify-content-center'>
       {topTracks.map((topTrack, index) => (
@@ -17,3 +17,5 @@ export default ({ topTracks }) => {
     </div>
   );
 };
+
+export default TrackList;

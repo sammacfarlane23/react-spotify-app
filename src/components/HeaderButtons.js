@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 
-export default ({ getTopTracks, getTopArtists }) => {
+const HeaderButtons = ({ getTopTracks, getTopArtists }) => {
   const [isTopTracks, setIsTopTracks] = useState(false);
   const [timeFrame, setTimeFrame] = useState('short_term');
   return (
@@ -71,3 +71,5 @@ export default ({ getTopTracks, getTopArtists }) => {
     </>
   );
 };
+
+export default HeaderButtons;

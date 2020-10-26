@@ -1,7 +1,7 @@
 import React from 'react';
 import ItemImage from './ItemImage';
 
-export default ({ topArtists }) => {
+const ArtistList = ({ topArtists }) => {
   return (
     <div className='d-flex flex-row flex-wrap justify-content-center'>
       {topArtists.map((topArtist, index) => (
@@ -17,3 +17,5 @@ export default ({ topArtists }) => {
     </div>
   );
 };
+
+export default ArtistList;

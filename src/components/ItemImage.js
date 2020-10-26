@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default ({ item, index, src }) => {
+const ItemImage = ({ item, index, src }) => {
   const [isArtistNameShown, setIsArtistNameShown] = useState(false);
 
   const getArtistsList = () => {
@@ -30,3 +30,5 @@ export default ({ item, index, src }) => {
     </div>
   );
 };
+
+export default ItemImage;
