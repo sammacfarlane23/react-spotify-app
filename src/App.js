@@ -120,11 +120,11 @@ const App = () => {
   return loggedIn ? (
     <Container className='min-vh-100'>
       <Row>
-        <Col xs={12}>
+        <Col xs={12} className='px-4'>
           {timeFrameMessage && (
             <h1 className='my-4'>
-              {timeFrameMessage}{' '}
-              <button className='icon-button' onClick={openModal}>
+              {timeFrameMessage}
+              <button className='icon-button ml-1' onClick={openModal}>
                 <FontAwesomeIcon icon={faEllipsisH} />
               </button>
             </h1>
