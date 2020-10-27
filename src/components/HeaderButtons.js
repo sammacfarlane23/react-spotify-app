@@ -15,7 +15,7 @@ const HeaderButtons = ({
     <>
       <Row className='justify-content-center'>
         <Button
-          className={`btn mr-2 mb-2 ${
+          className={`btn mr-1 mb-2 ${
             isHeaderTopTracks ? 'active-button' : ''
           }`}
           onClick={() => {
@@ -26,7 +26,7 @@ const HeaderButtons = ({
           Top Tracks
         </Button>
         <Button
-          className={`btn mr-2 mb-2 ${
+          className={`btn ml-1 mb-2 ${
             isHeaderTopTracks ? '' : 'active-button'
           }`}
           onClick={() => {
@@ -39,7 +39,7 @@ const HeaderButtons = ({
       </Row>
       <Row className='justify-content-center align-items-space-between my-3'>
         <Button
-          className={`btn mr-2 mb-2 ${
+          className={`btn mx-1 mb-2 ${
             timeFrame === 'long_term' ? 'active-button' : ''
           }`}
           onClick={() => {
@@ -53,7 +53,7 @@ const HeaderButtons = ({
           All Time
         </Button>
         <Button
-          className={`btn mr-2 mb-2 ${
+          className={`btn mx-1 mb-2 ${
             timeFrame === 'medium_term' ? 'active-button' : ''
           }`}
           onClick={() => {
@@ -67,7 +67,7 @@ const HeaderButtons = ({
           Last Six Months
         </Button>
         <Button
-          className={`btn mr-2 mb-2 ${
+          className={`btn mx-1 mb-2 ${
             timeFrame === 'short_term' ? 'active-button' : ''
           }`}
           onClick={() => {

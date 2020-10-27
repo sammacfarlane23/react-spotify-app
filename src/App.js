@@ -144,9 +144,10 @@ const App = () => {
         className='Modal'
         ariaHideApp={false}
       >
-        <button className='icon-button' onClick={closeModal}>
+        <button className='icon-button text-left' onClick={closeModal}>
           <FontAwesomeIcon icon={faTimes} />
         </button>
+        <h1 className='text-center mb-4'>Options</h1>
         <HeaderButtons
           closeModal={closeModal}
           isTopTracks={isTopTracks}

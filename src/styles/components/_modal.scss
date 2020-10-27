@@ -19,11 +19,15 @@
 }
 
 .Modal {
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   background: black;
   max-width: 90%;
-  padding: 0.5rem;
+  padding: 1rem;
   @media (min-width: 45rem) {
-    padding: 1rem 3rem;
+    padding: 2rem 3rem;
   }
   outline: none;
 }
