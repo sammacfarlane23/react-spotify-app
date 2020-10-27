@@ -144,7 +144,7 @@ const App = () => {
         className='Modal'
         ariaHideApp={false}
       >
-        <button className='icon-button text-left' onClick={closeModal}>
+        <button className='icon-button text-right' onClick={closeModal}>
           <FontAwesomeIcon icon={faTimes} />
         </button>
         <h1 className='text-center mb-4'>Options</h1>
