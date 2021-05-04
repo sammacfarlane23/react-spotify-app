@@ -3,9 +3,7 @@ import Spotify from "spotify-web-api-js";
 const spotifyApi = new Spotify();
 require("dotenv").config();
 
-let globalAccessToken = "";
-
-export function redirectUrlToSpotifyForLogin() {
+export const redirectUrlToSpotifyForLogin = () => {
   const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
   const REDIRECT_URI = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
 
@@ -15,6 +13,7 @@ export function redirectUrlToSpotifyForLogin() {
     "user-read-playback-state",
     "user-top-read",
   ];
+
   return (
     "https://accounts.spotify.com/authorize?client_id=" +
     CLIENT_ID +
@@ -24,15 +23,7 @@ export function redirectUrlToSpotifyForLogin() {
     encodeURIComponent(scopes.join(" ")) +
     "&response_type=token"
   );
-}
-
-export function setAccessToken(accessToken) {
-  //since using spotifyApi as helper library you can set the access code once
-  //you get it and then not have to include it in every request
-  spotifyApi.setAccessToken(accessToken);
-  // eslint-disable-next-line
-  globalAccessToken = accessToken;
-}
+};
 
 export async function getUserPlaylists() {
   //returns an array of objects with playlist name (like "Favorite Smashing Pumpkins jamz")

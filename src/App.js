@@ -15,6 +15,19 @@ import ItemList from "./components/ItemList";
 
 const spotifyApi = new SpotifyWebApi();
 
+const getHashParams = () => {
+  var hashParams = {};
+  var e,
+    r = /([^&;=]+)=?([^&;]*)/g,
+    q = window.location.hash.substring(1);
+  e = r.exec(q);
+  while (e) {
+    hashParams[e[1]] = decodeURIComponent(e[2]);
+    e = r.exec(q);
+  }
+  return hashParams;
+};
+
 const App = () => {
   let token = "";
   useConstructor(() => {
@@ -39,19 +52,6 @@ const App = () => {
   const closeModal = () => {
     setModalIsOpen(false);
   };
-
-  function getHashParams() {
-    var hashParams = {};
-    var e,
-      r = /([^&;=]+)=?([^&;]*)/g,
-      q = window.location.hash.substring(1);
-    e = r.exec(q);
-    while (e) {
-      hashParams[e[1]] = decodeURIComponent(e[2]);
-      e = r.exec(q);
-    }
-    return hashParams;
-  }
 
   const getTopArtists = (timeFrame) => {
     setIsTopTracks(false);
