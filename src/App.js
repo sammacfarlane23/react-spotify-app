@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import SpotifyWebApi from "spotify-web-api-js";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -7,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
+
 import "./styles/App.scss";
 import { useConstructor } from "./hooks/hooks";
 import LoginPage from "./components/LoginPage";
@@ -29,6 +31,11 @@ const getHashParams = () => {
 };
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  const timeFrame = useSelector((state) => state.timeFrame);
+  const topItems = useSelector((state) => state.topItems);
+
   let token = "";
   useConstructor(() => {
     const params = getHashParams();
@@ -38,12 +45,9 @@ const App = () => {
     }
   });
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [isTopTracks, setIsTopTracks] = useState(false);
   const [loggedIn] = useState(token ? true : false);
   const [topArtists, setTopArtists] = useState([]);
   const [topTracks, setTopTracks] = useState([]);
-  const [timeFrameMessage, setTimeFrameMessage] = useState("");
-  const [timeFrame, setTimeFrame] = useState("short_term");
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -53,24 +57,7 @@ const App = () => {
     setModalIsOpen(false);
   };
 
-  const getTopArtists = (timeFrame) => {
-    setIsTopTracks(false);
-    switch (timeFrame) {
-      case "short_term":
-        setTimeFrame("short_term");
-        setTimeFrameMessage("Your Top Artists From Last Four Weeks");
-        break;
-      case "medium_term":
-        setTimeFrame("medium_term");
-        setTimeFrameMessage("Your Top Artists From Last Six Months");
-        break;
-      case "long_term":
-        setTimeFrame("long_term");
-        setTimeFrameMessage("Your Top Artists of All Time");
-        break;
-      default:
-        setTimeFrameMessage("Top Artists");
-    }
+  const getTopArtists = () => {
     spotifyApi.getMyTopArtists({ limit: 50, time_range: timeFrame }).then(
       (response) => {
         const data = response.items;
@@ -82,24 +69,7 @@ const App = () => {
     );
   };
 
-  const getTopTracks = (timeFrame) => {
-    setIsTopTracks(true);
-    switch (timeFrame) {
-      case "short_term":
-        setTimeFrame("short_term");
-        setTimeFrameMessage("Your Top Tracks From Last Four Weeks");
-        break;
-      case "medium_term":
-        setTimeFrame("medium_term");
-        setTimeFrameMessage("Your Top Tracks From Last Six Months");
-        break;
-      case "long_term":
-        setTimeFrame("long_term");
-        setTimeFrameMessage("Your Top Tracks of All Time");
-        break;
-      default:
-        setTimeFrameMessage("Top Tracks");
-    }
+  const getTopTracks = () => {
     spotifyApi.getMyTopTracks({ limit: 50, time_range: timeFrame }).then(
       (response) => {
         const data = response.items;
@@ -111,29 +81,52 @@ const App = () => {
     );
   };
 
+  const getTitleMessage = (timeFrame, topItems) => {
+    const category = topItems === "tracks" ? "Tracks" : "Artists";
+
+    let duration = "";
+
+    switch (timeFrame) {
+      case "short_term":
+        duration = "From the Last Four Weeks";
+        break;
+      case "medium_term":
+        duration = "From the Last Six Months";
+        break;
+      case "long_term":
+        duration = "of All Time";
+        break;
+      default:
+        duration = "";
+    }
+
+    return `Your Top ${category} ${duration}`;
+  };
+
+  // I think we want to grab topTracks or artists in useEffect and only in useEffect
   useEffect(() => {
     if (loggedIn) {
-      isTopTracks ? getTopTracks("short_term") : getTopArtists("short_term");
+      topItems === "tracks"
+        ? getTopTracks(timeFrame)
+        : getTopArtists(timeFrame);
     }
-  }, [loggedIn, isTopTracks]);
+  }, [loggedIn, topItems, timeFrame]);
 
   return loggedIn ? (
     <Container className="min-vh-100">
       <Row>
         <Col xs={12} className="px-4">
-          {timeFrameMessage && (
-            <h1 className="my-4">
-              {timeFrameMessage}{" "}
-              <button className="icon-button" onClick={openModal}>
-                <FontAwesomeIcon icon={faEllipsisH} />
-              </button>
-            </h1>
-          )}
+          <h1 className="my-4">
+            {getTitleMessage(timeFrame, topItems)}{" "}
+            <button className="icon-button" onClick={openModal}>
+              <FontAwesomeIcon icon={faEllipsisH} />
+            </button>
+          </h1>
         </Col>
       </Row>
       <Row>
         <Col xs={12}>
-          <ItemList topList={isTopTracks ? topTracks : topArtists} />
+          <ItemList topList={topItems === "tracks" ? topTracks : topArtists} />
         </Col>
       </Row>
       <Modal
@@ -150,11 +143,14 @@ const App = () => {
         <h1 className="text-center mb-4">Options</h1>
         <HeaderButtons
           closeModal={closeModal}
-          isTopTracks={isTopTracks}
+          isTopTracks={topItems === "tracks"}
           timeFrame={timeFrame}
           getTopTracks={getTopTracks}
           getTopArtists={getTopArtists}
         />
+        <button onClick={() => dispatch({ type: "setLongTerm" })}>
+          Set long term through Redux store
+        </button>
       </Modal>
     </Container>
   ) : (
