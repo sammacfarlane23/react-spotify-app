@@ -1,11 +1,11 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
-import { isMobile } from 'react-device-detect';
+import React, { useState } from "react";
+import { isMobile } from "react-device-detect";
 
 const ItemImage = ({ item, index, src }) => {
   const [isArtistNameShown, setIsArtistNameShown] = useState(false);
 
   const getArtistsList = () => {
-    let artistString = '';
+    let artistString = "";
     item.artists.forEach((artist, index) => {
       if (index > 0) {
         artistString += `, ${artist.name}`;
@@ -17,9 +17,9 @@ const ItemImage = ({ item, index, src }) => {
   };
 
   return (
-    <div className='item'>
+    <div className="item">
       <div
-        className='item-image'
+        className="item-image"
         onMouseEnter={() => {
           if (!isMobile) {
             setIsArtistNameShown(true);
@@ -33,12 +33,12 @@ const ItemImage = ({ item, index, src }) => {
         style={{ backgroundImage: `url(${src})` }}
       >
         {isArtistNameShown && (
-          <p className='item-image__text'>
+          <p className="item-image__text">
             {index + 1}. {item.name} {item.artists && `by ${getArtistsList()}`}
           </p>
         )}
       </div>
-      <p className='item-image__text--mobile'>
+      <p className="item-image__text--mobile">
         {index + 1}. {item.name} {item.artists && `by ${getArtistsList()}`}
       </p>
     </div>

@@ -1,11 +1,10 @@
-import React from 'react';
-import { Container } from 'react-bootstrap';
-import ItemImage from './ItemImage';
+import React from "react";
+import ItemImage from "./ItemImage";
 
 const ItemList = ({ topList }) => {
   return (
-    <div className='d-flex'>
-      <div className='item-list'>
+    <div className="d-flex">
+      <div className="item-list">
         {topList.map((topItem, index) => (
           <ItemImage
             key={topItem.id}

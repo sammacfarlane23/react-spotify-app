@@ -1,28 +1,28 @@
-import Spotify from 'spotify-web-api-js';
+import Spotify from "spotify-web-api-js";
 
 const spotifyApi = new Spotify();
-require('dotenv').config();
+require("dotenv").config();
 
-let globalAccessToken = '';
+let globalAccessToken = "";
 
 export function redirectUrlToSpotifyForLogin() {
   const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
   const REDIRECT_URI = process.env.REACT_APP_SPOTIFY_REDIRECT_URI;
 
   const scopes = [
-    'user-read-private',
-    'user-read-email',
-    'user-read-playback-state',
-    'user-top-read',
+    "user-read-private",
+    "user-read-email",
+    "user-read-playback-state",
+    "user-top-read",
   ];
   return (
-    'https://accounts.spotify.com/authorize?client_id=' +
+    "https://accounts.spotify.com/authorize?client_id=" +
     CLIENT_ID +
-    '&redirect_uri=' +
+    "&redirect_uri=" +
     encodeURIComponent(REDIRECT_URI) +
-    '&scope=' +
-    encodeURIComponent(scopes.join(' ')) +
-    '&response_type=token'
+    "&scope=" +
+    encodeURIComponent(scopes.join(" ")) +
+    "&response_type=token"
   );
 }
 
@@ -30,6 +30,7 @@ export function setAccessToken(accessToken) {
   //since using spotifyApi as helper library you can set the access code once
   //you get it and then not have to include it in every request
   spotifyApi.setAccessToken(accessToken);
+  // eslint-disable-next-line
   globalAccessToken = accessToken;
 }
 
@@ -46,7 +47,7 @@ export async function getUserPlaylists() {
     return playlists;
   } catch (err) {
     //return default array with note that can't download playlists
-    console.error('Error: Attempting to get user playlists', err);
+    console.error("Error: Attempting to get user playlists", err);
     console.error(err.stack);
     return [{ id: null, playlistName: "Can't Download your Playlists!" }];
   }
