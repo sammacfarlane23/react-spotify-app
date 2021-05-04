@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
 const ItemImage = ({ item, index, src }) => {
@@ -17,7 +17,7 @@ const ItemImage = ({ item, index, src }) => {
   };
 
   return (
-    <div>
+    <div className='item'>
       <div
         className='item-image'
         onMouseEnter={() => {

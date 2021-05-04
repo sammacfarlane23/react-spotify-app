@@ -1,3 +1,10 @@
+// .item {
+//   flex-grow: 1;
+//   @media (min-width: 45rem) {
+//     max-width: 155px;
+//   }
+// }
+
 .item-image {
   display: flex;
   flex-direction: column;
@@ -17,6 +24,7 @@
   padding: 0.25rem 1rem;
   background: black;
   color: white;
+  word-wrap: wrap;
   border-radius: 5px;
   @media (max-width: 65rem) {
     display: none;
