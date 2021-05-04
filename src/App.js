@@ -71,7 +71,7 @@ const App = () => {
       default:
         setTimeFrameMessage('Top Artists');
     }
-    spotifyApi.getMyTopArtists({ limit: 50, time_range: timeFrame }).then(
+    spotifyApi.getMyTopArtists({ time_range: timeFrame }).then(
       (response) => {
         const data = response.items;
         setTopArtists(data);
@@ -100,7 +100,7 @@ const App = () => {
       default:
         setTimeFrameMessage('Top Tracks');
     }
-    spotifyApi.getMyTopTracks({ limit: 50, time_range: timeFrame }).then(
+    spotifyApi.getMyTopTracks({ time_range: timeFrame }).then(
       (response) => {
         const data = response.items;
         setTopTracks(data);
