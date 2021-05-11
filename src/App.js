@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import SpotifyWebApi from "spotify-web-api-js";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -31,8 +31,6 @@ const getHashParams = () => {
 };
 
 const App = () => {
-  const dispatch = useDispatch();
-
   const timeFrame = useSelector((state) => state.timeFrame);
   const topItems = useSelector((state) => state.topItems);
 
@@ -103,7 +101,6 @@ const App = () => {
     return `Your Top ${category} ${duration}`;
   };
 
-  // I think we want to grab topTracks or artists in useEffect and only in useEffect
   useEffect(() => {
     if (loggedIn) {
       topItems === "tracks"
@@ -148,9 +145,6 @@ const App = () => {
           getTopTracks={getTopTracks}
           getTopArtists={getTopArtists}
         />
-        <button onClick={() => dispatch({ type: "setLongTerm" })}>
-          Set long term through Redux store
-        </button>
       </Modal>
     </Container>
   ) : (
