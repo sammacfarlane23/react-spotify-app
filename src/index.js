@@ -4,9 +4,9 @@ import { Provider } from "react-redux";
 import { createStore } from "redux";
 
 import App from "./App";
-import { optionsReducer } from "./reducers/index";
+import rootReducer from "./reducers/index";
 
-const store = createStore(optionsReducer);
+const store = createStore(rootReducer);
 
 ReactDOM.render(
   <Provider store={store}>

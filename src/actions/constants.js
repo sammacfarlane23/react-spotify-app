@@ -1,0 +1,17 @@
+export const AUTHENTICATE_USER = "AUTHENTICATE_USER";
+export const STORE_ACCESS_TOKEN = "STORE_ACCESS_TOKEN";
+export const REMOVE_ACCESS_TOKEN = "REMOVE_ACCESS_TOKEN";
+export const SIGN_OUT_USER = "SIGN_OUT_USER";
+export const RETRIEVE_ARTIST = "RETRIEVE_ARTIST";
+export const RETRIEVE_SONGS = "RETRIEVE_SONGS";
+export const RETIEVE_SONG = "RETIEVE_SONG";
+export const RETRIEVE_ALBUM = "RETRIEVE_ALBUM";
+export const RETRIEVE_ALBUMS = "RETRIEVE_ALBUMS";
+export const SHUFFLE_PLAYLIST = "SHUFFLE_PLAYLIST";
+export const PLAY_NEXT_SONG = "PLAY_NEXT_SONG";
+export const PLAY_PREVIOUS_SONG = "PLAY_PREVIOUS_SONG";
+export const PLAY_SONG = "PLAY_SONG"; // Necessary to go from main menu to song display
+export const PLAY_ALBUM = "PLAY_ALBUM";
+export const GO_BACK_TO_MENU = "GO_BACK_TO_MENU";
+export const PAUSE_SONG = "PAUSE_SONG";
+export const STORE_USER_DATA = "STORE_USER_DATA";
