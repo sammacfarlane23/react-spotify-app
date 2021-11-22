@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import SpotifyWebApi from "spotify-web-api-js";
+import { useDispatch, useSelector } from "react-redux";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -9,13 +9,13 @@ import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
 import find from "lodash/find";
+import isEmpty from "lodash/isEmpty";
 import capitalize from "capitalize";
 import classnames from "classnames";
 
+import { getTopArtists, getTopTracks } from "../slices/topItems";
 import "../styles/App.scss";
 import ItemList from "./ItemList";
-
-const spotifyApi = new SpotifyWebApi();
 
 const SHORT_TERM = {
   slug: "short_term",
@@ -44,10 +44,11 @@ const MainDisplay = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [dataType, setDataType] = useState(ARTISTS);
   const [timeFrame, setTimeFrame] = useState(SHORT_TERM.slug);
-
-  const [topArtists, setTopArtists] = useState([]);
-  const [topTracks, setTopTracks] = useState([]);
   const [timeFrameMessage, setTimeFrameMessage] = useState("");
+
+  const topItems = useSelector((state) => state.topItems.data);
+
+  const dispatch = useDispatch();
 
   const openModal = () => {
     setModalIsOpen(true);
@@ -59,31 +60,20 @@ const MainDisplay = () => {
 
   useEffect(() => {
     if (dataType === "tracks") {
-      spotifyApi.getMyTopTracks({ limit: 50, time_range: timeFrame }).then(
-        (response) => {
-          setTopTracks(response.items);
-        },
-        () => {
-          console.log("unfortunately that request failed");
-        }
-      );
+      dispatch(getTopTracks({ timeFrame }));
     }
 
     if (dataType === "artists") {
-      spotifyApi.getMyTopArtists({ limit: 50, time_range: timeFrame }).then(
-        (response) => {
-          setTopArtists(response.items);
-        },
-        () => {
-          console.log("unfortunately that request failed");
-        }
-      );
+      dispatch(getTopArtists({ timeFrame }));
     }
 
     setTimeFrameMessage(
       `Your top ${dataType} of ${find(timeFrames, { slug: timeFrame }).period}`
     );
-  }, [timeFrame, dataType]);
+  }, [timeFrame, dataType, dispatch]);
+
+  // @TODO Use actual loading spinner
+  if (isEmpty(topItems)) return <div>Loading...</div>;
 
   return (
     <Container className="min-vh-100">
@@ -101,7 +91,7 @@ const MainDisplay = () => {
       </Row>
       <Row>
         <Col xs={12}>
-          <ItemList topList={dataType === "artists" ? topArtists : topTracks} />
+          <ItemList topList={topItems} />
         </Col>
       </Row>
       <Modal
