@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import SpotifyWebApi from "spotify-web-api-js";
 
-const spotifyApi = new SpotifyWebApi();
+import spotifyApi from "../spotifyFunctions";
 
 export const getTopTracks = createAsyncThunk(
   "topItems/getTopTracks",

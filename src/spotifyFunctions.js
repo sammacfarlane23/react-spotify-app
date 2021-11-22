@@ -43,3 +43,5 @@ export async function getUserPlaylists() {
     return [{ id: null, playlistName: "Can't Download your Playlists!" }];
   }
 }
+
+export default spotifyApi;
