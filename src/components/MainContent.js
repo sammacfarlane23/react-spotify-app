@@ -13,6 +13,7 @@ import isEmpty from "lodash/isEmpty";
 import capitalize from "capitalize";
 import classnames from "classnames";
 
+import NavBar from "../components/NavBar";
 import { getTopArtists, getTopTracks } from "../slices/topItems";
 import "../styles/App.scss";
 import ItemList from "./ItemList";
@@ -73,10 +74,16 @@ const MainDisplay = () => {
   }, [timeFrame, dataType, dispatch]);
 
   // @TODO Use actual loading spinner
-  if (isEmpty(topItems)) return <div>Loading...</div>;
+  if (isEmpty(topItems))
+    return (
+      <div className="min-vh-100">
+        <div className="p-5 text-white">Loading...</div>
+      </div>
+    );
 
   return (
     <Container className="min-vh-100">
+      <NavBar />
       <Row>
         <Col xs={12} className="px-4">
           {timeFrameMessage && (

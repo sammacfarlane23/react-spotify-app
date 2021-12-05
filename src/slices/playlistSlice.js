@@ -6,7 +6,7 @@ export const getUserPlaylists = createAsyncThunk(
   "playlist/getUserPlaylists",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await spotifyApi.getUserPlaylists();
+      const response = await spotifyApi.getUserPlaylists({ limit: 50 });
       return response.items;
     } catch (error) {
       return rejectWithValue(error.response.body);
