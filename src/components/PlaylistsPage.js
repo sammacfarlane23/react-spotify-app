@@ -10,6 +10,7 @@ import { getUserPlaylists } from "../slices/playlistSlice";
 import "../styles/App.scss";
 import ItemList from "./ItemList";
 
+// @TODO Refactor this and MainContent into one parent component
 const PlaylistsPage = () => {
   const playlists = useSelector((state) => state?.playlist?.data);
 

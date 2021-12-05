@@ -8,13 +8,17 @@ const logout = () => {
   Cookies.remove("access_token");
 };
 
+// @TODO Make this look better and highlight current page properly
 const NavBar = () => (
   <Navbar bg="dark" variant="dark">
     <Container>
-      <Navbar.Brand href="/">Home</Navbar.Brand>
-      <Nav className="me-auto">
-        <Nav.Link href="/">Top Tracks + Artists</Nav.Link>
-        <Nav.Link href="/playlists">Playlists</Nav.Link>
+      <Nav activeKey="1" className="me-auto">
+        <Nav.Link href="/" eventKey="1">
+          Top Tracks + Artists
+        </Nav.Link>
+        <Nav.Link href="/playlists" eventKey="2">
+          Playlists
+        </Nav.Link>
         <Nav.Link href="/" onSelect={() => logout()}>
           Log out
         </Nav.Link>
