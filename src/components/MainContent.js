@@ -14,7 +14,11 @@ import capitalize from "capitalize";
 import classnames from "classnames";
 
 import NavBar from "../components/NavBar";
-import { getTopArtists, getTopTracks } from "../slices/topItems";
+import {
+  getTopArtists,
+  getTopTracks,
+  getUserPlaylists,
+} from "../slices/itemsSlice";
 import "../styles/App.scss";
 import ItemList from "./ItemList";
 
@@ -37,17 +41,18 @@ const TRACKS = "tracks";
 
 const ARTISTS = "artists";
 
+const PLAYLISTS = "playlists";
+
 export const timeFrames = [SHORT_TERM, MEDIUM_TERM, LONG_TERM];
 
-export const dataTypes = [TRACKS, ARTISTS];
+export const contentTypes = [TRACKS, ARTISTS, PLAYLISTS];
 
-const MainDisplay = () => {
+const MainDisplay = ({ contentType }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [dataType, setDataType] = useState(ARTISTS);
   const [timeFrame, setTimeFrame] = useState(SHORT_TERM.slug);
   const [timeFrameMessage, setTimeFrameMessage] = useState("");
 
-  const topItems = useSelector((state) => state.topItems.data);
+  const items = useSelector((state) => state.items.data);
 
   const dispatch = useDispatch();
 
@@ -60,21 +65,29 @@ const MainDisplay = () => {
   };
 
   useEffect(() => {
-    if (dataType === "tracks") {
+    if (contentType === TRACKS) {
       dispatch(getTopTracks({ timeFrame }));
     }
 
-    if (dataType === "artists") {
+    if (contentType === ARTISTS) {
       dispatch(getTopArtists({ timeFrame }));
     }
 
+    if (contentType === PLAYLISTS) {
+      setTimeFrameMessage("Your playlists");
+      dispatch(getUserPlaylists());
+      return;
+    }
+
     setTimeFrameMessage(
-      `Your top ${dataType} of ${find(timeFrames, { slug: timeFrame }).period}`
+      `Your top ${contentType} of ${
+        find(timeFrames, { slug: timeFrame }).period
+      }`
     );
-  }, [timeFrame, dataType, dispatch]);
+  }, [timeFrame, dispatch, contentType]);
 
   // @TODO Use actual loading spinner
-  if (isEmpty(topItems))
+  if (isEmpty(items))
     return (
       <div className="min-vh-100">
         <div className="p-5 text-white">Loading...</div>
@@ -82,73 +95,67 @@ const MainDisplay = () => {
     );
 
   return (
-    <Container className="min-vh-100">
+    <>
       <NavBar />
-      <Row>
-        <Col xs={12} className="px-4">
-          {timeFrameMessage && (
-            <h1 className="my-4">
-              {timeFrameMessage}{" "}
-              <button className="icon-button" onClick={openModal}>
-                <FontAwesomeIcon icon={faEllipsisH} />
-              </button>
-            </h1>
-          )}
-        </Col>
-      </Row>
-      <Row>
-        <Col xs={12}>
-          <ItemList topList={topItems} />
-        </Col>
-      </Row>
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        closeTimeoutMS={200}
-        contentLabel="Options Modal"
-        className="Modal"
-        ariaHideApp={false}
-      >
-        <button className="icon-button text-right" onClick={closeModal}>
-          <FontAwesomeIcon icon={faTimes} />
-        </button>
-        <h1 className="text-center mb-4">Options</h1>
+      <Container className="min-vh-100">
+        <Row>
+          <Col xs={12} className="px-4">
+            {timeFrameMessage && (
+              <h1 className="my-4">
+                {timeFrameMessage}
+                {contentType !== PLAYLISTS && (
+                  <>
+                    {" "}
+                    <button className="icon-button" onClick={openModal}>
+                      <FontAwesomeIcon icon={faEllipsisH} />
+                    </button>
+                  </>
+                )}
+              </h1>
+            )}
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12}>
+            <ItemList topList={items} />
+          </Col>
+        </Row>
+        {contentType !== PLAYLISTS && (
+          <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            closeTimeoutMS={200}
+            contentLabel="Options Modal"
+            className="Modal"
+            ariaHideApp={false}
+          >
+            <button className="icon-button text-right" onClick={closeModal}>
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+            <h1 className="text-center mb-4">Options</h1>
 
-        <>
-          <Row className="justify-content-center">
-            {dataTypes.map((type) => (
-              <Button
-                key={type}
-                className={classnames("btn mr-1 mb-2", {
-                  "active-button": dataType === type,
-                })}
-                onClick={() => {
-                  setDataType(type);
-                }}
-              >
-                Top {capitalize(type)}
-              </Button>
-            ))}
-          </Row>
-          <Row className="justify-content-center align-items-space-between my-3">
-            {timeFrames.map(({ slug, period }) => (
-              <Button
-                key={slug}
-                className={classnames("btn mr-1 mb-2", {
-                  "active-button": timeFrame === slug,
-                })}
-                onClick={() => {
-                  setTimeFrame(slug);
-                  closeModal();
-                }}
-              >
-                {capitalize.words(period)}
-              </Button>
-            ))}
-          </Row>
-        </>
-      </Modal>
-    </Container>
+            <>
+              <Row className="justify-content-center align-items-space-between my-3 px-3">
+                {timeFrames.map(({ slug, period }) => (
+                  <Button
+                    key={slug}
+                    className={classnames("btn mr-1 mb-2", {
+                      "active-button": timeFrame === slug,
+                    })}
+                    onClick={() => {
+                      setTimeFrame(slug);
+                      closeModal();
+                    }}
+                  >
+                    {capitalize.words(period)}
+                  </Button>
+                ))}
+              </Row>
+            </>
+          </Modal>
+        )}
+      </Container>
+    </>
   );
 };
 

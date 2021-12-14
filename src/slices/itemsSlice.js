@@ -32,14 +32,26 @@ export const getTopArtists = createAsyncThunk(
   }
 );
 
+export const getUserPlaylists = createAsyncThunk(
+  "playlist/getUserPlaylists",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await spotifyApi.getUserPlaylists({ limit: 50 });
+      return response.items;
+    } catch (error) {
+      return rejectWithValue(error.response.body);
+    }
+  }
+);
+
 const initialState = {
   isLoading: false,
   error: false,
   data: {},
 };
 
-const topItemsSlice = createSlice({
-  name: "topItems",
+const itemsSlice = createSlice({
+  name: "items",
   initialState,
   reducers: {},
   extraReducers: {
@@ -69,7 +81,20 @@ const topItemsSlice = createSlice({
       state.error = true;
       state.isLoading = true;
     },
+    [getUserPlaylists.pending]: (state) => {
+      state.error = false;
+      state.isLoading = true;
+    },
+    [getUserPlaylists.fulfilled]: (state, action) => {
+      state.data = action.payload;
+      state.isLoading = false;
+    },
+    [getUserPlaylists.rejected]: (state, action) => {
+      state.data = action.payload;
+      state.error = true;
+      state.isLoading = true;
+    },
   },
 });
 
-export default topItemsSlice.reducer;
+export default itemsSlice.reducer;
