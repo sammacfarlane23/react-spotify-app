@@ -4,6 +4,7 @@ import { isMobile } from "react-device-detect";
 const ItemImage = ({ item, index, src }) => {
   const [isArtistNameShown, setIsArtistNameShown] = useState(false);
 
+
   const getArtistsList = () => {
     let artistString = "";
     item.artists.forEach((artist, index) => {
@@ -17,6 +18,8 @@ const ItemImage = ({ item, index, src }) => {
   };
 
   return (
+    <a href={item.external_urls.spotify} style={{background: "transparent"}}>
+
     <div className="item">
       <div
         className="item-image"
@@ -42,6 +45,7 @@ const ItemImage = ({ item, index, src }) => {
         {index + 1}. {item.name} {item.artists && `by ${getArtistsList()}`}
       </p>
     </div>
+    </a>
   );
 };
 
