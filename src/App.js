@@ -8,6 +8,7 @@ import LoginPage from "./components/LoginPage";
 import ArtistsPage from "./screens/Artists";
 import TracksPage from "./screens/Tracks";
 import PlaylistsPage from "./screens/Playlists";
+import NotFoundPage from "./screens/NotFound";
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -15,31 +16,24 @@ const App = () => {
   useEffect(() => {
     const params = queryString.parse(window.location.hash);
     const token = params.access_token || Cookies.get("access_token");
-    // @TODO Do something about access token expiring
     if (token) {
       spotifyApi.setAccessToken(token);
-      Cookies.set("access_token", token);
+      Cookies.set("access_token", token, { expires: 1 / 24 });
       navigate(window.location.pathname);
       setLoggedIn(true);
       return;
     }
-    setLoggedIn(false);
   }, []);
 
-  return (
-    <>
-      <Router>
-        {loggedIn ? (
-          <>
-            <ArtistsPage path="/" />
-            <TracksPage path="/tracks" />
-            <PlaylistsPage path="/playlists" />
-          </>
-        ) : (
-          <LoginPage path="/" />
-        )}
-      </Router>
-    </>
+  return loggedIn ? (
+    <Router>
+      <ArtistsPage path="/" />
+      <TracksPage path="/tracks" />
+      <PlaylistsPage path="/playlists" />
+      <NotFoundPage default />
+    </Router>
+  ) : (
+    <LoginPage />
   );
 };
 
