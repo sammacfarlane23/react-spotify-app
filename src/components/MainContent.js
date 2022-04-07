@@ -9,10 +9,10 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import Modal from "react-modal";
 import find from "lodash/find";
 import isEmpty from "lodash/isEmpty";
+import flatten from "lodash/flatten";
+import uniq from "lodash/uniq";
 import capitalize from "capitalize";
 import classnames from "classnames";
-import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
 
 import Layout from "./Layout";
 import {
@@ -24,6 +24,7 @@ import "../styles/App.scss";
 import spotifyApi from "../spotifyFunctions";
 
 import ItemList from "./ItemList";
+import PlaylistMergeForm from "./PlaylistMergeForm";
 
 const SHORT_TERM = {
   slug: "short_term",
@@ -50,8 +51,8 @@ export const timeFrames = [SHORT_TERM, MEDIUM_TERM, LONG_TERM];
 
 export const contentTypes = [TRACKS, ARTISTS, PLAYLISTS];
 
-const getAllPlaylistTracks = async (playlist) => {
-  const tracks = await spotifyApi.getPlaylistTracks(playlist.id, {
+const getPlaylistTracks = async (playlistId) => {
+  const tracks = await spotifyApi.getPlaylistTracks(playlistId, {
     limit: 100,
   });
 
@@ -63,53 +64,58 @@ const MainDisplay = ({ contentType }) => {
   const [timeFrame, setTimeFrame] = useState(SHORT_TERM.slug);
   const [timeFrameMessage, setTimeFrameMessage] = useState("");
   const [playlistName, setPlaylistName] = useState("");
-  const [firstPlaylist, setFirstPlaylist] = useState("");
-  const [secondPlaylist, setSecondPlaylist] = useState("");
   const dispatch = useDispatch();
 
   const items = useSelector((state) => state.items.data);
 
-  /* @TODO Can now merge playlists, need to check for duplicate tracks 
+  /* @TODO Fix this up to work with infinite number of playlists and need to check for duplicate tracks, 
   add some error handling and then improve the UX massively */
-  const createNewPlaylist = async () => {
+  const createNewPlaylist = async (playlists) => {
+    setModalIsOpen(true);
     const { id } = await spotifyApi.getMe();
 
     const { id: playlistId } = await spotifyApi.createPlaylist(id, {
       name: playlistName,
     });
 
-    const firstPlaylistTracks = await getAllPlaylistTracks(firstPlaylist);
-    const secondPlaylistTracks = await getAllPlaylistTracks(secondPlaylist);
-
-    const firstPlaylistUris = firstPlaylistTracks.map(({ track }) => track.uri);
-    const secondPlaylistUris = secondPlaylistTracks.map(
-      ({ track }) => track.uri
+    const allPlaylistTracks = flatten(
+      await Promise.all(
+        playlists.map(async (playlist) => {
+          const playlistTracks = await getPlaylistTracks(playlist.id);
+          return playlistTracks;
+        })
+      )
     );
 
-    // @TODO Make this more extensible
-    const tracksToAddUris = [...firstPlaylistUris];
+    console.log({ allPlaylistTracks });
 
-    secondPlaylistUris.forEach((uri) => {
-      if (tracksToAddUris.includes(uri)) {
-        return;
-      }
-      tracksToAddUris.push(uri);
-    });
+    const uniqueTracksToAddUris = uniq(
+      allPlaylistTracks.map(({ track }) => track.uri)
+    );
 
-    const numberOfTracks = tracksToAddUris.length;
+    const numberOfTracks = uniqueTracksToAddUris.length;
 
-    if (numberOfTracks > 100) {
-      const numberOfRequestsRequired = Math.ceil(numberOfTracks / 100);
-      for (let i = 0; i < numberOfRequestsRequired; i++) {
-        spotifyApi.addTracksToPlaylist(
-          playlistId,
-          tracksToAddUris.splice(0, 100)
-        );
-      }
+    // @TODO Work on logic for more than 100 songs
+    // if (numberOfTracks > 100) {
+    //   const numberOfRequestsRequired = Math.ceil(numberOfTracks / 100);
+    //   for (let i = 0; i < numberOfRequestsRequired; i++) {
+    //     spotifyApi.addTracksToPlaylist(
+    //       playlistId,
+    //       uniqueTracksToAddUris.splice(0, 100)
+    //     );
+    //   }
 
-      return;
-    }
-    spotifyApi.addTracksToPlaylist(playlistId, tracksToAddUris);
+    //   return;
+    // }
+    const response = await spotifyApi.addTracksToPlaylist(
+      playlistId,
+      uniqueTracksToAddUris
+    );
+    console.log({ response });
+    setTimeout(() => {
+      setModalIsOpen(false);
+      dispatch(getUserPlaylists());
+    }, 1000);
   };
 
   const closeModal = () => {
@@ -138,6 +144,35 @@ const MainDisplay = ({ contentType }) => {
     );
   }, [timeFrame, dispatch, contentType]);
 
+  const modalContent =
+    contentType === PLAYLISTS ? (
+      <h1 className="text-center mb-4">Merging your playlists...</h1>
+    ) : (
+      <>
+        <button className="icon-button text-right" onClick={closeModal}>
+          <FontAwesomeIcon icon={faTimes} />
+        </button>
+        <h1 className="text-center mb-4">Options</h1>
+
+        <Row className="justify-content-center align-items-space-between my-3 px-3">
+          {timeFrames.map(({ slug, period }) => (
+            <Button
+              key={slug}
+              className={classnames("btn mr-1 mb-2", {
+                "active-button": timeFrame === slug,
+              })}
+              onClick={() => {
+                setTimeFrame(slug);
+                closeModal();
+              }}
+            >
+              {capitalize.words(period)}
+            </Button>
+          ))}
+        </Row>
+      </>
+    );
+
   // @TODO Use actual loading spinner
   if (isEmpty(items))
     return (
@@ -153,87 +188,14 @@ const MainDisplay = ({ contentType }) => {
       {contentType === PLAYLISTS && (
         <Row>
           <Col>
-            <Form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                await createNewPlaylist();
+            <PlaylistMergeForm
+              {...{
+                createNewPlaylist,
+                items,
+                playlistName,
+                setPlaylistName,
               }}
-              className="p-4"
-            >
-              <h1>Merge Your Playlists</h1>
-              <Form.Group>
-                <Form.Label className="text-white">
-                  First Playlist for merge:
-                </Form.Label>
-                <select
-                  onChange={(e) => {
-                    const firstPlaylistObj = find(items, {
-                      id: e.target.value,
-                    });
-                    setFirstPlaylist(firstPlaylistObj);
-                  }}
-                  size="lg"
-                  aria-label="Select first playlist for merge"
-                  className="p-1 mb-3"
-                >
-                  {items.map(({ name, id }) => (
-                    <option key={id} value={id}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label className="text-white">
-                  Second Playlist for merge:
-                </Form.Label>
-                <select
-                  onChange={(e) => {
-                    const secondPlaylistObj = find(items, {
-                      id: e.target.value,
-                    });
-                    setSecondPlaylist(secondPlaylistObj);
-                  }}
-                  size="lg"
-                  aria-label="Select second playlist for merge"
-                  className="p-1 mb-3"
-                >
-                  {items.map(({ name, id }) => (
-                    <option key={id} value={id}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
-              </Form.Group>
-              <InputGroup className="mb-3">
-                <Form.Control
-                  placeholder="Recipient's username"
-                  aria-label="Recipient's username"
-                  aria-describedby="basic-addon2"
-                />
-                <Button variant="outline-secondary" id="button-addon2">
-                  Button
-                </Button>
-              </InputGroup>
-              <Form.Group
-                className="mb-3"
-                controlId="exampleForm.ControlInput1"
-              >
-                <Form.Label className="text-white my-3">
-                  Playlist name
-                </Form.Label>
-                <Form.Control
-                  value={playlistName}
-                  onChange={(e) => setPlaylistName(e.target.value)}
-                  placeholder="My new playlist"
-                />
-              </Form.Group>
-              <Row>
-                <Col className="d-flex justify-content-center">
-                  <Button type="submit">Create new playlist</Button>
-                </Col>
-              </Row>
-            </Form>
+            />
           </Col>
         </Row>
       )}
@@ -264,40 +226,16 @@ const MainDisplay = ({ contentType }) => {
           <ItemList topList={items} />
         </Col>
       </Row>
-      {contentType !== PLAYLISTS && (
-        <Modal
-          isOpen={modalIsOpen}
-          onRequestClose={closeModal}
-          closeTimeoutMS={200}
-          contentLabel="Options Modal"
-          className="Modal"
-          ariaHideApp={false}
-        >
-          <button className="icon-button text-right" onClick={closeModal}>
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-          <h1 className="text-center mb-4">Options</h1>
-
-          <>
-            <Row className="justify-content-center align-items-space-between my-3 px-3">
-              {timeFrames.map(({ slug, period }) => (
-                <Button
-                  key={slug}
-                  className={classnames("btn mr-1 mb-2", {
-                    "active-button": timeFrame === slug,
-                  })}
-                  onClick={() => {
-                    setTimeFrame(slug);
-                    closeModal();
-                  }}
-                >
-                  {capitalize.words(period)}
-                </Button>
-              ))}
-            </Row>
-          </>
-        </Modal>
-      )}
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        closeTimeoutMS={200}
+        contentLabel="Options Modal"
+        className="Modal"
+        ariaHideApp={false}
+      >
+        {modalContent}
+      </Modal>
     </Layout>
   );
 };
