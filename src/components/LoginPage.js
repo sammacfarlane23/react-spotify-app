@@ -1,8 +1,14 @@
-import React from "react";
-
 import { redirectUrlToSpotifyForLogin } from "../spotifyFunctions";
 
 const LoginPage = () => {
+  // @TODO Write some working logic that redirects any pathname to /login
+  // useEffect(() => {
+  //   if (hash.split("=")[0] !== "#access_token" && pathname !== "/login") {
+  //     console.log({ pathname, hash: hash.split("=")[0] });
+  //     navigate("/login");
+  //   }
+  // }, [hash, pathname]);
+
   return (
     <div className="login-page">
       <div className="login-page__box">

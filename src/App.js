@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Router, navigate } from "@reach/router";
 import queryString from "query-string";
 import Cookies from "js-cookie";
@@ -25,15 +25,20 @@ const App = () => {
     }
   }, []);
 
-  return loggedIn ? (
+  return (
     <Router>
-      <ArtistsPage path="/" />
-      <TracksPage path="/tracks" />
-      <PlaylistsPage path="/playlists" />
-      <NotFoundPage default />
+      {loggedIn ? (
+        <>
+          <ArtistsPage path="/" />
+          <TracksPage path="/tracks" />
+          <PlaylistsPage path="/playlists" />
+          <LoginPage path="/login" />
+          <NotFoundPage default />
+        </>
+      ) : (
+        <LoginPage path="*" />
+      )}
     </Router>
-  ) : (
-    <LoginPage />
   );
 };
 

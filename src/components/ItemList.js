@@ -1,4 +1,3 @@
-import React from "react";
 import ItemImage from "./ItemImage";
 
 const ItemList = ({ topList, imageSrc }) => {

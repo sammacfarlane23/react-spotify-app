@@ -1,4 +1,3 @@
-import React from "react";
 import { useLocation } from "@reach/router";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";

@@ -1,5 +1,4 @@
 import Button from "react-bootstrap/Button";
-import React from "react";
 
 import Layout from "../components/Layout";
 
