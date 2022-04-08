@@ -4,6 +4,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import find from "lodash/find";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const PlaylistMergeForm = ({
   createNewPlaylist,
@@ -25,11 +27,36 @@ const PlaylistMergeForm = ({
       }}
       className="p-4"
     >
-      <h1>Merge Your Playlists</h1>
+      <h1 className="text-center mb-4">Merge Your Playlists</h1>
+
+      {/* <Form.Group
+        className="mb-3 d-flex justify-content-between"
+        controlId="exampleForm.ControlInput1"
+      >
+        <Form.Label className="text-white my-3">Playlist name</Form.Label>
+        <Form.Control
+          size="sm"
+          //   className="form-control-sm"
+          value={playlistName}
+          onChange={(e) => setPlaylistName(e.target.value)}
+          placeholder="My new playlist"
+        />
+      </Form.Group> */}
+      <div className="w-100 mb-3 d-flex justify-content-between">
+        <label className="text-white font-weight-bold">
+          <h3>Playlist name</h3>
+        </label>
+        <input
+          value={playlistName}
+          onChange={(e) => setPlaylistName(e.target.value)}
+          placeholder="My new playlist"
+          className="px-2 py-1"
+        />
+      </div>
       {playlists.map((playlist, playlistIndex) => (
         <Form.Group className="d-flex justify-content-between">
           <Form.Label className="text-white">
-            Playlist {playlistIndex + 1}:
+            Playlist {playlistIndex + 1}
           </Form.Label>
           <select
             onChange={(e) => {
@@ -41,8 +68,8 @@ const PlaylistMergeForm = ({
               setPlaylists(newArray);
             }}
             size="lg"
-            aria-label="Select first playlist for merge"
-            className="p-1 mb-3"
+            aria-label="Select playlist for merge"
+            className="px-2 py-1 mb-3 w-50"
           >
             {items.map(({ name, id }, index) => (
               <option selected={playlistIndex === index} key={id} value={id}>
@@ -60,24 +87,14 @@ const PlaylistMergeForm = ({
             setPlaylists([...playlists, { playlist: null }]);
           }}
         >
-          +
+          <FontAwesomeIcon icon={faPlus} />
         </Button>
-      </Form.Group>
-
-      <Form.Group
-        className="mb-3 d-flex justify-content-between"
-        controlId="exampleForm.ControlInput1"
-      >
-        <Form.Label className="text-white my-3">Playlist name</Form.Label>
-        <Form.Control
-          value={playlistName}
-          onChange={(e) => setPlaylistName(e.target.value)}
-          placeholder="My new playlist"
-        />
       </Form.Group>
       <Row>
         <Col className="d-flex justify-content-center">
-          <Button type="submit">Create new playlist</Button>
+          <Button className="text-black" type="submit">
+            Create new playlist
+          </Button>
         </Col>
       </Row>
     </Form>
