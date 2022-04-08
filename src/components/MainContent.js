@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
+import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -161,6 +161,7 @@ const MainDisplay = ({ contentType }) => {
               className={classnames("btn mr-1 mb-2", {
                 "active-button": timeFrame === slug,
               })}
+              variant="contained"
               onClick={() => {
                 setTimeFrame(slug);
                 closeModal();

@@ -1,12 +1,14 @@
-import Container from "react-bootstrap/Container";
+import Container from "@mui/material/Container";
 
-import NavBar from "../components/NavBar";
+import BottomNav from "./BottomNav";
+import TopNav from "./TopNav";
 
 const Layout = ({ children }) => {
   return (
     <>
-      <NavBar />
+      <TopNav />
       <Container className="min-vh-100">{children}</Container>
+      <BottomNav />
     </>
   );
 };
