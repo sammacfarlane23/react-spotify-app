@@ -25,6 +25,7 @@ import spotifyApi from "../spotifyFunctions";
 import PlaylistLandingPage from "./PlaylistLandingPage";
 import ItemList from "./ItemList";
 import PlaylistMergeForm from "./PlaylistMergeForm";
+import { Box, Typography } from "@mui/material";
 
 const SHORT_TERM = {
   slug: "short_term",
@@ -207,22 +208,24 @@ const MainDisplay = ({ contentType }) => {
       <Row>
         <Col xs={12} className="px-4">
           {timeFrameMessage && (
-            <h1 className="my-4">
-              {timeFrameMessage}
-              {contentType !== PLAYLISTS && (
-                <>
-                  {" "}
-                  <button
-                    className="icon-button"
-                    onClick={() => {
-                      setModalIsOpen(true);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faEllipsisH} />
-                  </button>
-                </>
-              )}
-            </h1>
+            <Box sx={{ my: 4 }} color="white">
+              <Typography variant="h4">
+                {timeFrameMessage}
+                {contentType !== PLAYLISTS && (
+                  <>
+                    {" "}
+                    <button
+                      className="icon-button"
+                      onClick={() => {
+                        setModalIsOpen(true);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faEllipsisH} />
+                    </button>
+                  </>
+                )}
+              </Typography>
+            </Box>
           )}
         </Col>
       </Row>

@@ -19,8 +19,7 @@ const navConfig = [
   },
   {
     href: "/playlists",
-    // title: "Playlist Merger™",
-    title: "Playlists",
+    title: "Playlist Merger™",
     value: "playlists",
     icon: <FeaturedPlayList />,
   },

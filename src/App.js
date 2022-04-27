@@ -29,7 +29,7 @@ const theme = createTheme({
     MuiBottomNavigation: {
       styleOverrides: {
         root: {
-          backgroundColor: "#282829",
+          backgroundColor: "#000000",
         },
       },
     },
@@ -43,7 +43,7 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: "#282829",
+          backgroundColor: "#000000",
           color: "white",
         },
       },
