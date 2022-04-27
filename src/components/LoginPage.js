@@ -16,7 +16,7 @@ const LoginPage = () => {
         <p>Login to see your most played tracks and artists on Spotify</p>
         <a href={redirectUrlToSpotifyForLogin()}>Continue with Spotify</a>
         <p className="login-page__credit">
-          Designed and developed by Sam MacFarlane &#169; 2020
+          Designed and developed by Sam MacFarlane &#169; 2022
         </p>
       </div>
     </div>

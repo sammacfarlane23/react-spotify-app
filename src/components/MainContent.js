@@ -12,7 +12,6 @@ import isEmpty from "lodash/isEmpty";
 import flatten from "lodash/flatten";
 import uniq from "lodash/uniq";
 import capitalize from "capitalize";
-import classnames from "classnames";
 
 import {
   getTopArtists,
@@ -149,21 +148,38 @@ const MainDisplay = ({ contentType }) => {
 
   const modalContent =
     contentType === PLAYLISTS ? (
-      <h1 className="text-center mb-4">Merging your playlists...</h1>
+      <Typography
+        variant="h1"
+        sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}
+      >
+        Merging your playlists...
+      </Typography>
     ) : (
-      <>
-        <button className="icon-button text-right" onClick={closeModal}>
-          <FontAwesomeIcon icon={faTimes} />
-        </button>
-        <h1 className="text-center mb-4">Options</h1>
+      <Box sx={{ px: 3, py: 1 }}>
+        <Box display="flex" justifyContent="flex-end">
+          <Button onClick={closeModal}>
+            <FontAwesomeIcon icon={faTimes} />
+          </Button>
+        </Box>
+        <Typography
+          variant="h1"
+          sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center", mb: 3 }}
+        >
+          Options
+        </Typography>
 
-        <Row className="justify-content-center align-items-space-between my-3 px-3">
+        <Box
+          display="flex"
+          flexDirection="column"
+          // className="justify-content-center align-items-space-between my-3 px-3"
+        >
           {timeFrames.map(({ slug, period }) => (
             <Button
               key={slug}
-              className={classnames("btn mr-1 mb-2", {
-                "active-button": timeFrame === slug,
-              })}
+              sx={{
+                mb: 2,
+                backgroundColor: timeFrame !== slug && "black",
+              }}
               variant="contained"
               onClick={() => {
                 setTimeFrame(slug);
@@ -173,8 +189,8 @@ const MainDisplay = ({ contentType }) => {
               {capitalize.words(period)}
             </Button>
           ))}
-        </Row>
-      </>
+        </Box>
+      </Box>
     );
 
   // @TODO Use actual loading spinner
