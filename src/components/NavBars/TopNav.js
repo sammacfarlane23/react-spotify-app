@@ -1,4 +1,3 @@
-import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,17 +8,13 @@ import Button from "@mui/material/Button";
 import { Logout } from "@mui/icons-material";
 import Cookies from "js-cookie";
 
-const pages = ["Products", "Pricing", "Blog"];
+import navConfig from "./config";
+import { navigate } from "@reach/router";
 
 const ResponsiveAppBar = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-
   const handleLogout = () => {
     Cookies.remove("access_token");
-  };
-
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
+    navigate("/login");
   };
 
   return (
@@ -32,7 +27,7 @@ const ResponsiveAppBar = () => {
             component="div"
             sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
           >
-            SPOTIFY APP
+            SAM’S SPOTIFY APP
           </Typography>
 
           <Typography
@@ -41,22 +36,22 @@ const ResponsiveAppBar = () => {
             component="div"
             sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
           >
-            SPOTIFY APP
+            SAM’S SPOTIFY APP
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
+            {navConfig.map(({ title, href }) => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
+                key={title}
+                href={href}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
-                {page}
+                {title}
               </Button>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton onClick={handleLogout} sx={{ p: 0 }}>
+            <IconButton onClick={handleLogout} sx={{ p: 0, color: "white" }}>
               <Logout />
             </IconButton>
           </Box>

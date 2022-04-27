@@ -1,7 +1,7 @@
 import Container from "@mui/material/Container";
 
-import BottomNav from "./BottomNav";
-import TopNav from "./TopNav";
+import BottomNav from "./NavBars/BottomNav";
+import TopNav from "./NavBars/TopNav";
 
 const Layout = ({ children }) => {
   return (

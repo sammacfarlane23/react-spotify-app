@@ -14,7 +14,6 @@ import uniq from "lodash/uniq";
 import capitalize from "capitalize";
 import classnames from "classnames";
 
-import Layout from "./Layout";
 import {
   getTopArtists,
   getTopTracks,
@@ -23,6 +22,7 @@ import {
 import "../styles/App.scss";
 import spotifyApi from "../spotifyFunctions";
 
+import PlaylistLandingPage from "./PlaylistLandingPage";
 import ItemList from "./ItemList";
 import PlaylistMergeForm from "./PlaylistMergeForm";
 
@@ -65,6 +65,9 @@ const MainDisplay = ({ contentType }) => {
   const [timeFrameMessage, setTimeFrameMessage] = useState("");
   const [playlistName, setPlaylistName] = useState("");
   const dispatch = useDispatch();
+  const playlistsEnabled = JSON.parse(process.env.REACT_APP_PLAYLISTS_ENABLED);
+
+  console.log({ playlistsEnabled });
 
   const items = useSelector((state) => state.items.data);
 
@@ -95,18 +98,17 @@ const MainDisplay = ({ contentType }) => {
 
     const numberOfTracks = uniqueTracksToAddUris.length;
 
-    // @TODO Work on logic for more than 100 songs
-    // if (numberOfTracks > 100) {
-    //   const numberOfRequestsRequired = Math.ceil(numberOfTracks / 100);
-    //   for (let i = 0; i < numberOfRequestsRequired; i++) {
-    //     spotifyApi.addTracksToPlaylist(
-    //       playlistId,
-    //       uniqueTracksToAddUris.splice(0, 100)
-    //     );
-    //   }
+    if (numberOfTracks > 100) {
+      const numberOfRequestsRequired = Math.ceil(numberOfTracks / 100);
+      for (let i = 0; i < numberOfRequestsRequired; i++) {
+        spotifyApi.addTracksToPlaylist(
+          playlistId,
+          uniqueTracksToAddUris.splice(0, 100)
+        );
+      }
 
-    //   return;
-    // }
+      return;
+    }
     const response = await spotifyApi.addTracksToPlaylist(
       playlistId,
       uniqueTracksToAddUris
@@ -177,15 +179,17 @@ const MainDisplay = ({ contentType }) => {
   // @TODO Use actual loading spinner
   if (isEmpty(items))
     return (
-      <Layout>
-        <div className="p-5 text-white w-100 d-flex justify-content-center">
-          Loading...
-        </div>
-      </Layout>
+      <div className="p-5 text-white w-100 d-flex justify-content-center">
+        Loading...
+      </div>
     );
 
+  if (contentType === PLAYLISTS && !playlistsEnabled) {
+    return <PlaylistLandingPage />;
+  }
+
   return (
-    <Layout>
+    <>
       {contentType === PLAYLISTS && (
         <Row>
           <Col>
@@ -237,7 +241,7 @@ const MainDisplay = ({ contentType }) => {
       >
         {modalContent}
       </Modal>
-    </Layout>
+    </>
   );
 };
 
