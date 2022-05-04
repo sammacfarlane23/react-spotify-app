@@ -27,6 +27,7 @@ const BottomNav = () => {
       <BottomNavigation showLabels value={value} onChange={handleChange}>
         {navConfig.map(({ href, title, value, icon }, index) => (
           <BottomNavigationAction
+            key={title}
             label={title}
             component={Link}
             to={href}

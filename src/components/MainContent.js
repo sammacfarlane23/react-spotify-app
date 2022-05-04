@@ -67,8 +67,6 @@ const MainDisplay = ({ contentType }) => {
   const dispatch = useDispatch();
   const playlistsEnabled = JSON.parse(process.env.REACT_APP_PLAYLISTS_ENABLED);
 
-  console.log({ playlistsEnabled });
-
   const items = useSelector((state) => state.items.data);
 
   /* @TODO Fix this up to work with infinite number of playlists and need to check for duplicate tracks, 

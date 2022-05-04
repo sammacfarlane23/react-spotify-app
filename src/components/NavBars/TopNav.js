@@ -5,13 +5,34 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import MenuIcon from "@mui/icons-material/Menu";
 import { Logout } from "@mui/icons-material";
 import Cookies from "js-cookie";
+import { Link, navigate } from "@reach/router";
 
 import navConfig from "./config";
-import { navigate } from "@reach/router";
+import { useState } from "react";
 
 const ResponsiveAppBar = () => {
+  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+
+  const toggleDrawer = (open) => (event) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    setDrawerIsOpen(open);
+  };
+
   const handleLogout = () => {
     Cookies.remove("access_token");
     navigate("/login");
@@ -31,13 +52,64 @@ const ResponsiveAppBar = () => {
           </Typography>
 
           <Typography
-            variant="h6"
+            variant="h5"
             noWrap
             component="div"
-            sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
+            sx={{
+              flexGrow: 1,
+              fontWeight: "bold",
+              display: { xs: "flex", md: "none" },
+            }}
           >
             SAM’S SPOTIFY APP
           </Typography>
+
+          <Box sx={{ display: { xs: "flex", md: "none" } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={toggleDrawer(true)}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+
+            <Drawer
+              anchor="right"
+              open={drawerIsOpen}
+              onClose={toggleDrawer(false)}
+            >
+              <Box
+                sx={{
+                  width: 250,
+                }}
+                role="presentation"
+                onClick={toggleDrawer(false)}
+                onKeyDown={toggleDrawer(false)}
+              >
+                <List>
+                  {navConfig.map(({ title, icon, href }) => (
+                    <ListItem button component={Link} to={href} key={title}>
+                      <ListItemIcon>{icon}</ListItemIcon>
+                      <ListItemText primary={title} />
+                    </ListItem>
+                  ))}
+                </List>
+                <Divider />
+                <List>
+                  <ListItem button onClick={handleLogout}>
+                    <ListItemIcon>
+                      <Logout />
+                    </ListItemIcon>
+                    <ListItemText primary="Logout" />
+                  </ListItem>
+                </List>
+              </Box>
+            </Drawer>
+          </Box>
+
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {navConfig.map(({ title, href }) => (
               <Button
@@ -50,7 +122,7 @@ const ResponsiveAppBar = () => {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, display: { xs: "none", md: "flex" } }}>
             <IconButton onClick={handleLogout} sx={{ p: 0, color: "white" }}>
               <Logout />
             </IconButton>

@@ -48,6 +48,14 @@ const theme = createTheme({
         },
       },
     },
+    MuiDrawer: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#000000",
+          color: "white",
+        },
+      },
+    },
   },
 });
 
