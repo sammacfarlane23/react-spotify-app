@@ -1,9 +1,7 @@
 import { combineReducers } from "redux";
 
-import topItemsReducer from "../slices/topItems";
-import playlistReducer from "../slices/playlistSlice";
+import itemsReducer from "../slices/itemsSlice";
 
 export default combineReducers({
-  topItems: topItemsReducer,
-  playlist: playlistReducer,
+  items: itemsReducer,
 });

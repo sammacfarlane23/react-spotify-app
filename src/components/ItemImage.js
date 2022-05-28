@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { isMobile } from "react-device-detect";
 
 const ItemImage = ({ item, index, src }) => {
@@ -17,31 +17,34 @@ const ItemImage = ({ item, index, src }) => {
   };
 
   return (
-    <div className="item">
-      <div
-        className="item-image"
-        onMouseEnter={() => {
-          if (!isMobile) {
-            setIsArtistNameShown(true);
-          }
-        }}
-        onMouseLeave={() => {
-          if (!isMobile) {
-            setIsArtistNameShown(false);
-          }
-        }}
-        style={{ backgroundImage: `url(${src})` }}
-      >
-        {isArtistNameShown && (
-          <p className="item-image__text">
-            {index + 1}. {item.name} {item.artists && `by ${getArtistsList()}`}
-          </p>
-        )}
+    <a href={item.external_urls.spotify} style={{ background: "transparent" }}>
+      <div className="item">
+        <div
+          className="item-image"
+          onMouseEnter={() => {
+            if (!isMobile) {
+              setIsArtistNameShown(true);
+            }
+          }}
+          onMouseLeave={() => {
+            if (!isMobile) {
+              setIsArtistNameShown(false);
+            }
+          }}
+          style={{ backgroundImage: `url(${src})` }}
+        >
+          {isArtistNameShown && (
+            <p className="item-image__text">
+              {index + 1}. {item.name}{" "}
+              {item.artists && `by ${getArtistsList()}`}
+            </p>
+          )}
+        </div>
+        <p className="item-image__text--mobile">
+          {index + 1}. {item.name} {item.artists && `by ${getArtistsList()}`}
+        </p>
       </div>
-      <p className="item-image__text--mobile">
-        {index + 1}. {item.name} {item.artists && `by ${getArtistsList()}`}
-      </p>
-    </div>
+    </a>
   );
 };
 

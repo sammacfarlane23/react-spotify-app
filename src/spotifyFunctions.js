@@ -25,23 +25,4 @@ export const redirectUrlToSpotifyForLogin = () => {
   );
 };
 
-export async function getUserPlaylists() {
-  //returns an array of objects with playlist name (like "Favorite Smashing Pumpkins jamz")
-  //and the id of the playlist. Use this to feed the playlists selection list
-  try {
-    const playlistsResponse = await spotifyApi.getUserPlaylists();
-    //playlistsResponse.items are the actual playlist objects
-    const playlists = playlistsResponse.items.map((playlistObject) => {
-      const { id, name } = playlistObject;
-      return { id: id, playlistName: name };
-    });
-    return playlists;
-  } catch (err) {
-    //return default array with note that can't download playlists
-    console.error("Error: Attempting to get user playlists", err);
-    console.error(err.stack);
-    return [{ id: null, playlistName: "Can't Download your Playlists!" }];
-  }
-}
-
 export default spotifyApi;
