@@ -164,11 +164,7 @@ const MainDisplay = ({ contentType }) => {
           Options
         </Typography>
 
-        <Box
-          display="flex"
-          flexDirection="column"
-          // className="justify-content-center align-items-space-between my-3 px-3"
-        >
+        <Box display="flex" flexDirection="column">
           {timeFrames.map(({ slug, period }) => (
             <Button
               key={slug}
@@ -221,7 +217,11 @@ const MainDisplay = ({ contentType }) => {
           }}
         />
       )}
-      <Box xs={12} className="px-4">
+      <Box
+        sx={{
+          px: 3,
+        }}
+      >
         {timeFrameMessage && (
           <Box sx={{ my: 4, color: "#fff" }}>
             <Typography variant="h4">
