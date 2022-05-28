@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import Button from "@mui/material/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
@@ -194,9 +192,17 @@ const MainDisplay = ({ contentType }) => {
   // @TODO Use actual loading spinner
   if (isEmpty(items))
     return (
-      <div className="p-5 text-white w-100 d-flex justify-content-center">
+      <Box
+        sx={{
+          color: "#fff",
+          width: 1,
+          display: "flex",
+          justifyContent: "center",
+          p: 5,
+        }}
+      >
         Loading...
-      </div>
+      </Box>
     );
 
   if (contentType === PLAYLISTS && !playlistsEnabled) {
@@ -206,48 +212,46 @@ const MainDisplay = ({ contentType }) => {
   return (
     <>
       {contentType === PLAYLISTS && (
-        <Row>
-          <Col>
-            <PlaylistMergeForm
-              {...{
-                createNewPlaylist,
-                items,
-                playlistName,
-                setPlaylistName,
-              }}
-            />
-          </Col>
-        </Row>
+        <PlaylistMergeForm
+          {...{
+            createNewPlaylist,
+            items,
+            playlistName,
+            setPlaylistName,
+          }}
+        />
       )}
-      <Row>
-        <Col xs={12} className="px-4">
-          {timeFrameMessage && (
-            <Box sx={{ my: 4 }} color="white">
-              <Typography variant="h4">
-                {timeFrameMessage}
-                {contentType !== PLAYLISTS && (
-                  <>
-                    {" "}
-                    <button
-                      className="icon-button"
-                      onClick={() => {
-                        setModalIsOpen(true);
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faEllipsisH} />
-                    </button>
-                  </>
-                )}
-              </Typography>
-            </Box>
-          )}
-        </Col>
-      </Row>
-      <Row>
-        <Col xs={12}>
-          <ItemList topList={items} />
-        </Col>
-      </Row>
+      <Box xs={12} className="px-4">
+        {timeFrameMessage && (
+          <Box sx={{ my: 4, color: "#fff" }}>
+            <Typography variant="h4">
+              {timeFrameMessage}
+              {contentType !== PLAYLISTS && (
+                <>
+                  {" "}
+                  <Button
+                    sx={{
+                      background: "none",
+                      border: "none",
+                      outline: "none",
+                      padding: 0,
+                      fontSize: "inherit",
+                    }}
+                    onClick={() => {
+                      setModalIsOpen(true);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faEllipsisH} />
+                  </Button>
+                </>
+              )}
+            </Typography>
+          </Box>
+        )}
+      </Box>
+      <Box>
+        <ItemList topList={items} />
+      </Box>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
