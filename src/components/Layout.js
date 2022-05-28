@@ -6,7 +6,7 @@ const Layout = ({ children }) => {
   return (
     <>
       <TopNav />
-      <Container className="min-vh-100">{children}</Container>
+      <Container sx={{ minHeight: "100vh" }}>{children}</Container>
     </>
   );
 };
