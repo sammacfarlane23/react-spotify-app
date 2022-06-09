@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Form from "react-bootstrap/Form";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
+import FormGroup from "@mui/material/FormGroup";
+import FormLabel from "@mui/material/FormLabel";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import find from "lodash/find";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,28 +20,16 @@ const PlaylistMergeForm = ({
 
   // @TODO Make number of playlists adjustable
   return (
-    <Form
+    <Box
+      component="form"
       onSubmit={async (e) => {
         e.preventDefault();
         await createNewPlaylist(playlists);
       }}
-      className="p-4"
+      sx={{ p: 4 }}
     >
       <h1 className="text-center mb-4">Merge Your Playlists</h1>
 
-      {/* <Form.Group
-        className="mb-3 d-flex justify-content-between"
-        controlId="exampleForm.ControlInput1"
-      >
-        <Form.Label className="text-white my-3">Playlist name</Form.Label>
-        <Form.Control
-          size="sm"
-          //   className="form-control-sm"
-          value={playlistName}
-          onChange={(e) => setPlaylistName(e.target.value)}
-          placeholder="My new playlist"
-        />
-      </Form.Group> */}
       <div className="w-100 mb-3 d-flex justify-content-between">
         <label className="text-white font-weight-bold">
           <h3>Playlist name</h3>
@@ -54,10 +42,16 @@ const PlaylistMergeForm = ({
         />
       </div>
       {playlists.map((playlist, playlistIndex) => (
-        <Form.Group className="d-flex justify-content-between">
-          <Form.Label className="text-white">
+        <FormGroup
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <FormLabel className="text-white">
             Playlist {playlistIndex + 1}
-          </Form.Label>
+          </FormLabel>
           <select
             onChange={(e) => {
               const firstPlaylistObj = find(items, {
@@ -77,27 +71,40 @@ const PlaylistMergeForm = ({
               </option>
             ))}
           </select>
-        </Form.Group>
+        </FormGroup>
       ))}
 
-      <Form.Group className="d-flex justify-content-center mb-3">
+      <FormGroup className="d-flex justify-content-center mb-3">
         <Button
-          className="rounded-circle"
+          sx={{
+            borderRadius: "50% !important",
+            width: 40,
+            height: 40,
+          }}
+          variant="contained"
           onClick={() => {
             setPlaylists([...playlists, { playlist: null }]);
           }}
         >
           <FontAwesomeIcon icon={faPlus} />
         </Button>
-      </Form.Group>
-      <Row>
-        <Col className="d-flex justify-content-center">
-          <Button className="text-black" type="submit">
-            Create new playlist
-          </Button>
-        </Col>
-      </Row>
-    </Form>
+      </FormGroup>
+      <Box>
+        <Button
+          sx={{
+            mt: 5,
+            maxWidth: 200,
+          }}
+          variant="contained"
+          fullWidth={true}
+          href="/"
+          className="text-black"
+          type="submit"
+        >
+          Create new playlist
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
