@@ -18,7 +18,6 @@ import {
   getTopTracks,
   getUserPlaylists,
 } from "../slices/itemsSlice";
-import "../styles/App.scss";
 import spotifyApi from "../spotifyFunctions";
 
 import PlaylistLandingPage from "./PlaylistLandingPage";

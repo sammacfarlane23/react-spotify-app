@@ -1,5 +1,6 @@
-import { Link, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 
 import DesktopBackground from "../images/login-image-desktop.jpg";
 import MobileBackground from "../images/login-image-mobile.jpg";
@@ -52,12 +53,13 @@ const LoginPage = () => {
         <Typography paragraph={true}>
           Login to see your most played tracks and artists on Spotify
         </Typography>
-        <Link
-          sx={{ color: "#fff", textDecoration: "none", mx: 4 }}
+        <Button
+          sx={{ mx: 4, fontSize: 12, boxShadow: 0, borderRadius: 0 }}
           href={redirectUrlToSpotifyForLogin()}
+          variant="contained"
         >
           Continue with Spotify
-        </Link>
+        </Button>
         <Typography
           variant="caption"
           sx={{ color: "white", position: "fixed", bottom: 0, mb: 2 }}

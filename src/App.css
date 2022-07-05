@@ -1,0 +1,12 @@
+html,
+body {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+#root {
+  background-color: black;
+  background-color: #000000;
+  background: repeating-linear-gradient(45deg, #414141, #000000 450px);
+  padding-bottom: 40px;
+}

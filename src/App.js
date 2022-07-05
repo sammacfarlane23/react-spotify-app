@@ -6,6 +6,7 @@ import { ThemeProvider } from "@mui/material/styles";
 
 import spotifyApi from "./spotifyFunctions";
 import theme from "./theme";
+import "./App.css";
 import LoginPage from "./components/LoginPage";
 import ArtistsPage from "./screens/Artists";
 import TracksPage from "./screens/Tracks";

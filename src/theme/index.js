@@ -1,15 +1,25 @@
 import { createTheme } from "@mui/material/styles";
 
-const theme = createTheme({
+let theme = createTheme({
   palette: {
     primary: {
       main: "#1db954",
+      light: "#37D36E",
+    },
+    secondary: {
+      main: "#edf2ff",
     },
   },
+});
 
+theme = createTheme(theme, {
   typography: {
     caption: {
       fontSize: 10,
+    },
+    h1: {
+      color: "white",
+      fontSize: "2rem",
     },
   },
 
@@ -18,6 +28,10 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: "white",
+          "&:hover": {
+            color: "white",
+            borderColor: "white",
+          },
         },
       },
     },
@@ -48,6 +62,22 @@ const theme = createTheme({
         root: {
           backgroundColor: "#000000",
           color: "white",
+        },
+      },
+    },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          padding: "6px 12px",
+          textDecoration: "none",
+          color: "white",
+          backgroundColor: theme.palette.primary.main,
+          "&:hover": {
+            color: "white",
+            backgroundColor: theme.palette.primary.light,
+            backgroundColor: "orange",
+            borderColor: "white",
+          },
         },
       },
     },
