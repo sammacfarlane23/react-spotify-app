@@ -1,26 +1,35 @@
 import { useState } from "react";
+import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
+import { Typography } from "@mui/material";
 import { isMobile } from "react-device-detect";
+import listify from "listify";
 
 const ItemImage = ({ item, index, src }) => {
   const [isArtistNameShown, setIsArtistNameShown] = useState(false);
 
-  const getArtistsList = () => {
-    let artistString = "";
-    item.artists.forEach((artist, index) => {
-      if (index > 0) {
-        artistString += `, ${artist.name}`;
-      } else {
-        artistString += artist.name;
-      }
-    });
-    return artistString;
-  };
+  const artistNames = item.artists?.map(({ name }) => name);
+  const artists = item.artists ? `by ${listify(artistNames)}` : "";
+  const description = `${index + 1}. ${item.name} ${artists}`;
 
   return (
-    <a href={item.external_urls.spotify} style={{ background: "transparent" }}>
-      <div className="item">
-        <div
-          className="item-image"
+    <Link
+      href={item.external_urls.spotify}
+      style={{ background: "transparent" }}
+      sx={{ color: "#fff", textDecoration: "none" }}
+    >
+      <Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            width: 130,
+            height: 130,
+            backgroundSize: "cover",
+            m: { xs: "0 0.3rem", md: 0 },
+          }}
           onMouseEnter={() => {
             if (!isMobile) {
               setIsArtistNameShown(true);
@@ -34,17 +43,40 @@ const ItemImage = ({ item, index, src }) => {
           style={{ backgroundImage: `url(${src})` }}
         >
           {isArtistNameShown && (
-            <p className="item-image__text">
-              {index + 1}. {item.name}{" "}
-              {item.artists && `by ${getArtistsList()}`}
-            </p>
+            <Typography
+              paragraph={true}
+              sx={{
+                background: "black",
+                wordWrap: "wrap",
+                borderRadius: 5,
+                px: 0.5,
+                py: 1,
+                textAlign: "center",
+                display: {
+                  xs: "none",
+                  md: "block",
+                },
+                zIndex: 10000,
+              }}
+            >
+              {description}
+            </Typography>
           )}
-        </div>
-        <p className="item-image__text--mobile">
-          {index + 1}. {item.name} {item.artists && `by ${getArtistsList()}`}
-        </p>
-      </div>
-    </a>
+        </Box>
+        <Typography
+          paragraph={true}
+          sx={{
+            p: 1,
+            m: 0,
+            maxWidth: 130,
+            textAlign: "center",
+            display: { md: "none" },
+          }}
+        >
+          {description}
+        </Typography>
+      </Box>
+    </Link>
   );
 };
 

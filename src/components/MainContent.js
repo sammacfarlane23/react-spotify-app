@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import Modal from "react-modal";
 import find from "lodash/find";
 import isEmpty from "lodash/isEmpty";
 import flatten from "lodash/flatten";
@@ -18,13 +18,11 @@ import {
   getTopTracks,
   getUserPlaylists,
 } from "../slices/itemsSlice";
-import "../styles/App.scss";
 import spotifyApi from "../spotifyFunctions";
 
 import PlaylistLandingPage from "./PlaylistLandingPage";
 import ItemList from "./ItemList";
 import PlaylistMergeForm from "./PlaylistMergeForm";
-import { Box, Typography } from "@mui/material";
 
 const SHORT_TERM = {
   slug: "short_term",
@@ -60,7 +58,9 @@ const getPlaylistTracks = async (playlistId) => {
 };
 
 const MainDisplay = ({ contentType }) => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const [timeFrame, setTimeFrame] = useState(SHORT_TERM.slug);
   const [timeFrameMessage, setTimeFrameMessage] = useState("");
   const [playlistName, setPlaylistName] = useState("");
@@ -72,7 +72,7 @@ const MainDisplay = ({ contentType }) => {
   /* @TODO Fix this up to work with infinite number of playlists and need to check for duplicate tracks, 
   add some error handling and then improve the UX massively */
   const createNewPlaylist = async (playlists) => {
-    setModalIsOpen(true);
+    handleOpen();
     const { id } = await spotifyApi.getMe();
 
     const { id: playlistId } = await spotifyApi.createPlaylist(id, {
@@ -113,13 +113,9 @@ const MainDisplay = ({ contentType }) => {
     );
     console.log({ response });
     setTimeout(() => {
-      setModalIsOpen(false);
+      handleOpen();
       dispatch(getUserPlaylists());
     }, 1000);
-  };
-
-  const closeModal = () => {
-    setModalIsOpen(false);
   };
 
   useEffect(() => {
@@ -144,59 +140,85 @@ const MainDisplay = ({ contentType }) => {
     );
   }, [timeFrame, dispatch, contentType]);
 
-  const modalContent =
-    contentType === PLAYLISTS ? (
-      <Typography
-        variant="h1"
-        sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}
-      >
-        Merging your playlists...
-      </Typography>
-    ) : (
-      <Box sx={{ px: 3, py: 1 }}>
-        <Box display="flex" justifyContent="flex-end">
-          <Button onClick={closeModal}>
-            <FontAwesomeIcon icon={faTimes} />
-          </Button>
-        </Box>
+  const modalContent = (
+    <Box
+      sx={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 400,
+        maxWidth: "80%",
+        bgcolor: "#000",
+        border: "2px solid #000",
+        borderRadius: 3,
+        boxShadow: 24,
+        p: 4,
+      }}
+    >
+      {contentType === PLAYLISTS ? (
         <Typography
           variant="h1"
-          sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center", mb: 3 }}
+          sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}
         >
-          Options
+          Merging your playlists...
         </Typography>
-
-        <Box
-          display="flex"
-          flexDirection="column"
-          // className="justify-content-center align-items-space-between my-3 px-3"
-        >
-          {timeFrames.map(({ slug, period }) => (
-            <Button
-              key={slug}
-              sx={{
-                mb: 2,
-                backgroundColor: timeFrame !== slug && "black",
-              }}
-              variant="contained"
-              onClick={() => {
-                setTimeFrame(slug);
-                closeModal();
-              }}
-            >
-              {capitalize.words(period)}
+      ) : (
+        <>
+          <Box display="flex" justifyContent="flex-end">
+            <Button onClick={handleClose}>
+              <FontAwesomeIcon icon={faTimes} />
             </Button>
-          ))}
-        </Box>
-      </Box>
-    );
+          </Box>
+          <Typography
+            variant="h1"
+            sx={{
+              fontSize: 25,
+              fontWeight: "bold",
+              textAlign: "center",
+              mb: 3,
+            }}
+          >
+            Options
+          </Typography>
+
+          <Box display="flex" flexDirection="column">
+            {timeFrames.map(({ slug, period }) => (
+              <Button
+                key={slug}
+                sx={{
+                  mb: 2,
+                  backgroundColor: timeFrame !== slug && "black",
+                }}
+                variant="contained"
+                onClick={() => {
+                  setTimeFrame(slug);
+                  handleClose();
+                }}
+              >
+                {capitalize.words(period)}
+              </Button>
+            ))}
+          </Box>
+        </>
+      )}
+    </Box>
+  );
 
   // @TODO Use actual loading spinner
   if (isEmpty(items))
     return (
-      <div className="p-5 text-white w-100 d-flex justify-content-center">
+      <Box
+        sx={{
+          color: "#fff",
+          width: 1,
+          display: "flex",
+          justifyContent: "center",
+          p: 5,
+        }}
+      >
         Loading...
-      </div>
+      </Box>
     );
 
   if (contentType === PLAYLISTS && !playlistsEnabled) {
@@ -206,55 +228,55 @@ const MainDisplay = ({ contentType }) => {
   return (
     <>
       {contentType === PLAYLISTS && (
-        <Row>
-          <Col>
-            <PlaylistMergeForm
-              {...{
-                createNewPlaylist,
-                items,
-                playlistName,
-                setPlaylistName,
-              }}
-            />
-          </Col>
-        </Row>
+        <PlaylistMergeForm
+          {...{
+            createNewPlaylist,
+            items,
+            playlistName,
+            setPlaylistName,
+          }}
+        />
       )}
-      <Row>
-        <Col xs={12} className="px-4">
-          {timeFrameMessage && (
-            <Box sx={{ my: 4 }} color="white">
-              <Typography variant="h4">
-                {timeFrameMessage}
-                {contentType !== PLAYLISTS && (
-                  <>
-                    {" "}
-                    <button
-                      className="icon-button"
-                      onClick={() => {
-                        setModalIsOpen(true);
-                      }}
-                    >
-                      <FontAwesomeIcon icon={faEllipsisH} />
-                    </button>
-                  </>
-                )}
-              </Typography>
-            </Box>
-          )}
-        </Col>
-      </Row>
-      <Row>
-        <Col xs={12}>
-          <ItemList topList={items} />
-        </Col>
-      </Row>
+      <Box
+        sx={{
+          px: 3,
+        }}
+      >
+        {timeFrameMessage && (
+          <Box sx={{ my: 4, color: "#fff" }}>
+            <Typography variant="h4">
+              {timeFrameMessage}
+              {contentType !== PLAYLISTS && (
+                <>
+                  {" "}
+                  <Button
+                    sx={{
+                      background: "none",
+                      border: "none",
+                      outline: "none",
+                      padding: 0,
+                      fontSize: "inherit",
+                    }}
+                    onClick={() => {
+                      handleOpen();
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faEllipsisH} />
+                  </Button>
+                </>
+              )}
+            </Typography>
+          </Box>
+        )}
+      </Box>
+      <Box>
+        <ItemList topList={items} />
+      </Box>
       <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        closeTimeoutMS={200}
-        contentLabel="Options Modal"
-        className="Modal"
-        ariaHideApp={false}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
         {modalContent}
       </Modal>

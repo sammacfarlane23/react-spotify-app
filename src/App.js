@@ -2,62 +2,16 @@ import { useState, useEffect } from "react";
 import { Router, navigate } from "@reach/router";
 import queryString from "query-string";
 import Cookies from "js-cookie";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
 
 import spotifyApi from "./spotifyFunctions";
+import theme from "./theme";
+import "./App.css";
 import LoginPage from "./components/LoginPage";
 import ArtistsPage from "./screens/Artists";
 import TracksPage from "./screens/Tracks";
 import PlaylistsPage from "./screens/Playlists";
 import NotFoundPage from "./screens/NotFound";
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#1db954",
-    },
-  },
-
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          color: "white",
-        },
-      },
-    },
-    MuiBottomNavigation: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#000000",
-        },
-      },
-    },
-    MuiBottomNavigationAction: {
-      styleOverrides: {
-        root: {
-          color: "white",
-        },
-      },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#000000",
-          color: "white",
-        },
-      },
-    },
-    MuiDrawer: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "#000000",
-          color: "white",
-        },
-      },
-    },
-  },
-});
 
 const App = () => {
   const [loggedIn, setLoggedIn] = useState(false);
