@@ -75,7 +75,6 @@ theme = createTheme(theme, {
           "&:hover": {
             color: "white",
             backgroundColor: theme.palette.primary.light,
-            backgroundColor: "orange",
             borderColor: "white",
           },
         },

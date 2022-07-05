@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
-import { Typography } from "@mui/material";
+import Typography from "@mui/material/Typography";
 import { isMobile } from "react-device-detect";
 import listify from "listify";
 
@@ -40,7 +40,10 @@ const ItemImage = ({ item, index, src }) => {
               setIsArtistNameShown(false);
             }
           }}
-          style={{ backgroundImage: `url(${src})` }}
+          style={{
+            backgroundImage: `url(${src})`,
+            transition: "background 300ms ease-in 200ms",
+          }}
         >
           {isArtistNameShown && (
             <Typography
