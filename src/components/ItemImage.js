@@ -42,7 +42,7 @@ const ItemImage = ({ item, index, src }) => {
           }}
           style={{
             backgroundImage: `url(${src})`,
-            transition: "background 300ms ease-in 200ms",
+            transition: "background 600ms ease-in 500ms",
           }}
         >
           {isArtistNameShown && (

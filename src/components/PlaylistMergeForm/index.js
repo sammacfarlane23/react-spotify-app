@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import find from "lodash/find";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Typography from "@mui/material/Typography";
 
 const PlaylistMergeForm = ({
   createNewPlaylist,
@@ -28,11 +29,22 @@ const PlaylistMergeForm = ({
       }}
       sx={{ p: 4 }}
     >
-      <h1 className="text-center mb-4">Merge Your Playlists</h1>
+      <Typography variant="h1" sx={{ color: "white", mb: 4 }}>
+        Merge Your Playlists
+      </Typography>
 
-      <div className="w-100 mb-3 d-flex justify-content-between">
-        <label className="text-white font-weight-bold">
-          <h3>Playlist name</h3>
+      <Box
+        sx={{
+          width: 1,
+          mb: 3,
+          display: "flex",
+          justifyContent: "between",
+        }}
+      >
+        <label className="">
+          <Typography variant="h3" sx={{ color: "white" }}>
+            Playlist name
+          </Typography>
         </label>
         <input
           value={playlistName}
@@ -40,7 +52,7 @@ const PlaylistMergeForm = ({
           placeholder="My new playlist"
           className="px-2 py-1"
         />
-      </div>
+      </Box>
       {playlists.map((playlist, playlistIndex) => (
         <FormGroup
           sx={{
@@ -49,7 +61,7 @@ const PlaylistMergeForm = ({
             justifyContent: "space-between",
           }}
         >
-          <FormLabel className="text-white">
+          <FormLabel sx={{ color: "white" }}>
             Playlist {playlistIndex + 1}
           </FormLabel>
           <select
