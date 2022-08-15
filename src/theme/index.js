@@ -2,6 +2,9 @@ import { createTheme } from "@mui/material/styles";
 
 let theme = createTheme({
   palette: {
+    text: {
+      primary: "#fff",
+    },
     primary: {
       main: "#1db954",
       light: "#37D36E",
@@ -14,11 +17,13 @@ let theme = createTheme({
 
 theme = createTheme(theme, {
   typography: {
+    allVariants: {
+      color: "#fff",
+    },
     caption: {
       fontSize: 10,
     },
     h1: {
-      color: "white",
       fontSize: "2rem",
     },
   },
@@ -32,6 +37,34 @@ theme = createTheme(theme, {
             color: "white",
             borderColor: "white",
           },
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          color: "white",
+        },
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          color: "white",
+        },
+      },
+    },
+    MuiNativeSelect: {
+      styleOverrides: {
+        root: {
+          color: "white !important",
+        },
+      },
+    },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          color: "white",
         },
       },
     },
