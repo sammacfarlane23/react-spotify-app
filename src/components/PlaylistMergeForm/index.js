@@ -61,16 +61,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const getNextPlaylistOrFirst = (items, index) => {
+  // If the next playlist doesn't exist, return the first playlist
+  if (index > items.length - 1) {
+    return items[0];
+  }
+  return items[index];
+};
+
 const PlaylistMergeForm = ({
   createNewPlaylist,
   items,
   playlistName,
   setPlaylistName,
 }) => {
+  const secondPlaylist = getNextPlaylistOrFirst(items, 1);
   const [playlists, setPlaylists] = useState([
-    { playlist: null },
-    { playlist: null },
+    { ...items[0] },
+    { ...secondPlaylist },
   ]);
+
+  console.log({ playlists });
 
   const classes = useStyles();
 
@@ -85,7 +96,6 @@ const PlaylistMergeForm = ({
         variant="elevation"
         elevation={20}
         sx={{
-          // backgroundColor: "#212121",
           backgroundImage: "linear-gradient(to bottom left, #000, #313131)",
           mt: 5,
           display: "flex",
@@ -129,7 +139,7 @@ const PlaylistMergeForm = ({
               color="#fff"
             >
               {playlists.length === 0 ? (
-                <>Click the button below select playlists to merge</>
+                <>Click the button below to select playlists to merge</>
               ) : (
                 <>Playlists to Merge</>
               )}
@@ -161,8 +171,9 @@ const PlaylistMergeForm = ({
                   SelectProps={{
                     native: true,
                   }}
-                  // variant="standard"
                   sx={{ backgroundColor: "#414141", mb: 3, flexGrow: 1, mr: 2 }}
+                  value={playlist.id}
+                  selected={playlist}
                 >
                   {items.map(({ name, id }, index) => (
                     <option
@@ -184,7 +195,6 @@ const PlaylistMergeForm = ({
                     size="md"
                     icon={faTrash}
                     className={classes.deleteButton}
-                    // @TODO Get the removal of the playlist to work
                     onClick={() => {
                       const newPlaylists = playlists.filter(
                         (playlist, index) => index !== playlistIndex
@@ -208,7 +218,11 @@ const PlaylistMergeForm = ({
             className={classes.addPlaylistButton}
             variant="outlined"
             onClick={() => {
-              setPlaylists([...playlists, { playlist: null }]);
+              const nextOrFirstPlaylist = getNextPlaylistOrFirst(
+                items,
+                playlists.length
+              );
+              setPlaylists([...playlists, { ...nextOrFirstPlaylist }]);
             }}
           >
             +{"  "}Add playlist
