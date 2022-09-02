@@ -8,7 +8,15 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Typography from "@mui/material/Typography";
 import { makeStyles } from "@mui/styles";
+import flatten from "lodash/flatten";
+import uniq from "lodash/uniq";
 import { Paper } from "@mui/material";
+import { useDispatch } from "react-redux";
+
+import Modal from "../Modal";
+import { getUserPlaylists } from "../../slices/itemsSlice";
+import spotifyApi from "../../spotifyFunctions";
+import ItemImage from "../ItemImage";
 
 const useStyles = makeStyles((theme) => ({
   textFieldRoot: {
@@ -59,6 +67,16 @@ const useStyles = makeStyles((theme) => ({
   deleteButton: {
     cursor: "pointer",
   },
+  "@keyframes blinker": {
+    from: { opacity: 0.8 },
+    to: { opacity: 0.4 },
+  },
+  playlistMergeText: {
+    animationName: "$blinker",
+    animationDuration: "1s",
+    animationTimingFunction: "ease-in-out",
+    animationIterationCount: "infinite",
+  },
 }));
 
 const getNextPlaylistOrFirst = (items, index) => {
@@ -69,12 +87,20 @@ const getNextPlaylistOrFirst = (items, index) => {
   return items[index];
 };
 
-const PlaylistMergeForm = ({
-  createNewPlaylist,
-  items,
-  playlistName,
-  setPlaylistName,
-}) => {
+const getPlaylistTracks = async (playlistId) => {
+  const tracks = await spotifyApi.getPlaylistTracks(playlistId, {
+    limit: 100,
+  });
+
+  return tracks.items;
+};
+
+const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
+  const classes = useStyles();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const dispatch = useDispatch();
   const secondPlaylist = getNextPlaylistOrFirst(items, 1);
   const [playlists, setPlaylists] = useState([
     { ...items[0] },
@@ -83,7 +109,54 @@ const PlaylistMergeForm = ({
 
   console.log({ playlists });
 
-  const classes = useStyles();
+  /* @TODO Fix this up to work with infinite number of playlists and need to check for duplicate tracks, 
+  add some error handling and then improve the UX massively */
+  const createNewPlaylist = async (playlists) => {
+    handleOpen();
+    const { id } = await spotifyApi.getMe();
+
+    const { id: playlistId } = await spotifyApi.createPlaylist(id, {
+      name: playlistName,
+    });
+
+    const allPlaylistTracks = flatten(
+      await Promise.all(
+        playlists.map(async (playlist) => {
+          const playlistTracks = await getPlaylistTracks(playlist.id);
+          return playlistTracks;
+        })
+      )
+    );
+
+    console.log({ allPlaylistTracks });
+
+    const uniqueTracksToAddUris = uniq(
+      allPlaylistTracks.map(({ track }) => track.uri)
+    );
+
+    const numberOfTracks = uniqueTracksToAddUris.length;
+
+    if (numberOfTracks > 100) {
+      const numberOfRequestsRequired = Math.ceil(numberOfTracks / 100);
+      for (let i = 0; i < numberOfRequestsRequired; i++) {
+        spotifyApi.addTracksToPlaylist(
+          playlistId,
+          uniqueTracksToAddUris.splice(0, 100)
+        );
+      }
+
+      return;
+    }
+    const response = await spotifyApi.addTracksToPlaylist(
+      playlistId,
+      uniqueTracksToAddUris
+    );
+    console.log({ response });
+    setTimeout(() => {
+      handleOpen();
+      dispatch(getUserPlaylists());
+    }, 1000);
+  };
 
   return (
     <Box
@@ -248,6 +321,33 @@ const PlaylistMergeForm = ({
           </Box>
         </Box>
       </Paper>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Typography
+          variant="h1"
+          color="white"
+          className={classes.playlistMergeText}
+          sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}
+        >
+          Merging your playlists...
+        </Typography>
+        <Box>
+          {playlists.map((playlist, index) => (
+            <Box color="white">
+              <ItemImage
+                item={playlist}
+                index={index}
+                src={playlist.images[0].url}
+              />
+              <Typography variant="subtitle2">{playlist.name}</Typography>
+            </Box>
+          ))}
+        </Box>
+      </Modal>
     </Box>
   );
 };
