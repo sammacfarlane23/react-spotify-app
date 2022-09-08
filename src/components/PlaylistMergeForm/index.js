@@ -7,6 +7,7 @@ import find from "lodash/find";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Typography from "@mui/material/Typography";
+import FormHelperText from "@mui/material/FormHelperText";
 import { makeStyles } from "@mui/styles";
 import flatten from "lodash/flatten";
 import uniq from "lodash/uniq";
@@ -77,6 +78,9 @@ const useStyles = makeStyles((theme) => ({
     animationTimingFunction: "ease-in-out",
     animationIterationCount: "infinite",
   },
+  playlistMergeModal: {
+    backgroundColor: "grey",
+  },
 }));
 
 const getNextPlaylistOrFirst = (items, index) => {
@@ -92,12 +96,32 @@ const getPlaylistTracks = async (playlistId) => {
     limit: 100,
   });
 
+  const totalTracks = tracks.total;
+
+  // Logic to deal with API pagination was written entirely by copilot
+  if (totalTracks > 100) {
+    const numberOfRequests = Math.ceil(totalTracks / 100);
+    const requests = [];
+    for (let i = 1; i < numberOfRequests; i++) {
+      requests.push(
+        spotifyApi.getPlaylistTracks(playlistId, {
+          limit: 100,
+          offset: i * 100,
+        })
+      );
+    }
+    const responses = await Promise.all(requests);
+    const allTracks = responses.map((response) => response.items);
+    return [...tracks.items, ...flatten(allTracks)];
+  }
+
   return tracks.items;
 };
 
 const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const dispatch = useDispatch();
@@ -107,16 +131,27 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
     { ...secondPlaylist },
   ]);
 
-  console.log({ playlists });
-
   /* @TODO Fix this up to work with infinite number of playlists and need to check for duplicate tracks, 
   add some error handling and then improve the UX massively */
   const createNewPlaylist = async (playlists) => {
+    // Validation fully written by copilot based on error state names
+    if (!playlistName) {
+      setError("Please enter a name for your new playlist");
+      return;
+    }
+
+    if (playlists.length < 2) {
+      setError("Please add at least two playlists to merge");
+      return;
+    }
+
     handleOpen();
     const { id } = await spotifyApi.getMe();
 
     const { id: playlistId } = await spotifyApi.createPlaylist(id, {
       name: playlistName,
+      description: "Playlist created by Playlist Merge",
+      public: false,
     });
 
     const allPlaylistTracks = flatten(
@@ -128,8 +163,6 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
       )
     );
 
-    console.log({ allPlaylistTracks });
-
     const uniqueTracksToAddUris = uniq(
       allPlaylistTracks.map(({ track }) => track.uri)
     );
@@ -138,24 +171,26 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
 
     if (numberOfTracks > 100) {
       const numberOfRequestsRequired = Math.ceil(numberOfTracks / 100);
+      const requests = [];
       for (let i = 0; i < numberOfRequestsRequired; i++) {
-        spotifyApi.addTracksToPlaylist(
-          playlistId,
-          uniqueTracksToAddUris.splice(0, 100)
+        requests.push(
+          spotifyApi.addTracksToPlaylist(
+            playlistId,
+            uniqueTracksToAddUris.splice(0, 100)
+          )
         );
       }
 
-      return;
+      await Promise.all(requests);
+    } else {
+      await spotifyApi.addTracksToPlaylist(playlistId, uniqueTracksToAddUris);
     }
-    const response = await spotifyApi.addTracksToPlaylist(
-      playlistId,
-      uniqueTracksToAddUris
-    );
-    console.log({ response });
     setTimeout(() => {
-      handleOpen();
+      handleClose();
       dispatch(getUserPlaylists());
     }, 1000);
+
+    return;
   };
 
   return (
@@ -200,11 +235,24 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
           <TextField
             label="New playlist name"
             value={playlistName}
-            onChange={(e) => setPlaylistName(e.target.value)}
+            onChange={(e) => {
+              setError("");
+              setPlaylistName(e.target.value);
+            }}
             placeholder="A great name for your new playlist..."
             classes={{ root: classes.textFieldRoot }}
             sx={{ backgroundColor: "#414141", mb: 5 }}
           />
+
+          {error && (
+            <FormHelperText
+              sx={{ position: "absolute", top: 270, fontSize: 12 }}
+              error={true}
+            >
+              {error}
+            </FormHelperText>
+          )}
+
           <Box textAlign="center">
             <Typography
               variant="h6"
@@ -291,6 +339,7 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
             className={classes.addPlaylistButton}
             variant="outlined"
             onClick={() => {
+              setError("");
               const nextOrFirstPlaylist = getNextPlaylistOrFirst(
                 items,
                 playlists.length
@@ -313,8 +362,8 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
               className={classes.createNewPlaylistButton}
               variant="contained"
               fullWidth={true}
-              href="/"
-              type="submit"
+              type="button"
+              onClick={() => createNewPlaylist(playlists)}
             >
               Create new playlist
             </Button>
@@ -326,6 +375,7 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        className={classes.playlistMergeModal}
       >
         <Typography
           variant="h1"
