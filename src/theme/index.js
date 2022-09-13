@@ -38,6 +38,9 @@ theme = createTheme(theme, {
             borderColor: "white",
           },
         },
+        outlined: {
+          borderColor: "white",
+        },
       },
     },
     MuiInputBase: {

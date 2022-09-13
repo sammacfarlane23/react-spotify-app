@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormGroup from "@mui/material/FormGroup";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -11,11 +11,11 @@ import FormHelperText from "@mui/material/FormHelperText";
 import { makeStyles } from "@mui/styles";
 import flatten from "lodash/flatten";
 import uniq from "lodash/uniq";
-import { Paper } from "@mui/material";
-import { useDispatch } from "react-redux";
+import { Grid, Paper } from "@mui/material";
+import Confetti from "react-confetti";
+import useWindowSize from "react-use/lib/useWindowSize";
 
 import Modal from "../Modal";
-import { getUserPlaylists } from "../../slices/itemsSlice";
 import spotifyApi from "../../spotifyFunctions";
 import ItemImage from "../ItemImage";
 
@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
     to: { opacity: 0.4 },
   },
   playlistMergeText: {
-    animationName: "$blinker",
+    // animationName: "$blinker",
     animationDuration: "1s",
     animationTimingFunction: "ease-in-out",
     animationIterationCount: "infinite",
@@ -81,6 +81,34 @@ const useStyles = makeStyles((theme) => ({
   playlistMergeModal: {
     backgroundColor: "grey",
   },
+  "@keyframes merge": {
+    from: {
+      position: "static",
+      top: 0,
+      left: 0,
+    },
+    to: {
+      position: "absolute",
+      top: "50%",
+      // left: "50%",
+    },
+  },
+  playlistMergeItem: {
+    animationName: "$blinker",
+    animationDuration: "1s",
+    animationTimingFunction: "in",
+    // animationTimingFunction: "ease-in-out",
+    animationIterationCount: "infinite",
+  },
+  // "@keyframes containerMerge": {
+  //   from: { width: "100%" },
+  //   to: { width: "50%" },
+  // },
+  // mergeContainer: {
+  //   animationName: "$containerMerge",
+  //   animationDuration: "1s",
+  //   animationIterationCount: "infinite",
+  // },
 }));
 
 const getNextPlaylistOrFirst = (items, index) => {
@@ -121,15 +149,28 @@ const getPlaylistTracks = async (playlistId) => {
 const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const [newPlaylist, setNewPlaylist] = useState(null);
   const [error, setError] = useState("");
+  const [windowHeight, setWindowHeight] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(0);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const dispatch = useDispatch();
   const secondPlaylist = getNextPlaylistOrFirst(items, 1);
   const [playlists, setPlaylists] = useState([
     { ...items[0] },
     { ...secondPlaylist },
   ]);
+
+  useEffect(() => {
+    setWindowHeight(window.innerHeight);
+    setWindowWidth(window.innerWidth);
+  }, []);
+
+  const handleModalDismiss = () => {
+    handleClose();
+    setPlaylistName("");
+    setNewPlaylist(null);
+  };
 
   /* @TODO Fix this up to work with infinite number of playlists and need to check for duplicate tracks, 
   add some error handling and then improve the UX massively */
@@ -148,7 +189,7 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
     handleOpen();
     const { id } = await spotifyApi.getMe();
 
-    const { id: playlistId } = await spotifyApi.createPlaylist(id, {
+    const response = await spotifyApi.createPlaylist(id, {
       name: playlistName,
       description: "Playlist created by Playlist Merge",
       public: false,
@@ -175,7 +216,7 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
       for (let i = 0; i < numberOfRequestsRequired; i++) {
         requests.push(
           spotifyApi.addTracksToPlaylist(
-            playlistId,
+            response.id,
             uniqueTracksToAddUris.splice(0, 100)
           )
         );
@@ -183,12 +224,17 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
 
       await Promise.all(requests);
     } else {
-      await spotifyApi.addTracksToPlaylist(playlistId, uniqueTracksToAddUris);
+      await spotifyApi.addTracksToPlaylist(response.id, uniqueTracksToAddUris);
     }
-    setTimeout(() => {
-      handleClose();
-      dispatch(getUserPlaylists());
-    }, 1000);
+
+    spotifyApi
+      .getPlaylist(response.id)
+      .then((playlist) => {
+        setNewPlaylist(playlist);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     return;
   };
@@ -377,26 +423,85 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
         aria-describedby="modal-modal-description"
         className={classes.playlistMergeModal}
       >
-        <Typography
-          variant="h1"
-          color="white"
-          className={classes.playlistMergeText}
-          sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}
-        >
-          Merging your playlists...
-        </Typography>
-        <Box>
-          {playlists.map((playlist, index) => (
-            <Box color="white">
-              <ItemImage
-                item={playlist}
-                index={index}
-                src={playlist.images[0].url}
-              />
-              <Typography variant="subtitle2">{playlist.name}</Typography>
+        {!newPlaylist ? (
+          <>
+            <Typography
+              variant="h1"
+              color="white"
+              className={classes.playlistMergeText}
+              sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}
+            >
+              Merging your playlists...
+            </Typography>
+            <Box mt={5}>
+              <Grid
+                container={true}
+                spacing={2}
+                flexDirection="row"
+                justifyContent="center"
+                className={classes.mergeContainer}
+              >
+                {playlists.map((playlist, index) => (
+                  <Grid item={true} className={classes.playlistMergeItem}>
+                    <ItemImage
+                      item={playlist}
+                      index={index}
+                      src={playlist.images[0].url}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
             </Box>
-          ))}
-        </Box>
+          </>
+        ) : (
+          <>
+            {/* @TODO: Get confetti coming from correct place */}
+            <Confetti
+              recycle={false}
+              numberOfPieces={400}
+              width={windowWidth}
+              height={windowHeight}
+            />
+            <Typography
+              variant="h1"
+              color="white"
+              className={classes.playlistMergeText}
+              sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}
+            >
+              🎉{"   "}Here is your new playlist{"   "}🎉
+            </Typography>
+            <Box mt={5}>
+              <Grid
+                container={true}
+                spacing={2}
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                className={classes.mergeContainer}
+              >
+                <Box>
+                  <ItemImage
+                    item={newPlaylist}
+                    src={newPlaylist.images[0].url}
+                  />
+                </Box>
+
+                <Box>
+                  <Button color="primary" variant="contained">
+                    View on Spotify
+                  </Button>
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={() => handleModalDismiss()}
+                  >
+                    Dismiss
+                  </Button>
+                </Box>
+              </Grid>
+            </Box>
+          </>
+        )}
       </Modal>
     </Box>
   );

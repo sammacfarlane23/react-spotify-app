@@ -5,15 +5,18 @@ import Typography from "@mui/material/Typography";
 import { isMobile } from "react-device-detect";
 import listify from "listify";
 
-const ItemImage = ({ item, index, src }) => {
+const ItemImage = ({ item, index, src, className }) => {
   const [isArtistNameShown, setIsArtistNameShown] = useState(false);
 
   const artistNames = item.artists?.map(({ name }) => name);
   const artists = item.artists ? `by ${listify(artistNames)}` : "";
-  const description = `${index + 1}. ${item.name} ${artists}`;
+  const description = index
+    ? `${index}. ${item.name} ${artists}`
+    : `${item.name} ${artists}`;
 
   return (
     <Link
+      className={className}
       href={item.external_urls.spotify}
       style={{ background: "transparent" }}
       sx={{ color: "#fff", textDecoration: "none" }}

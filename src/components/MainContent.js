@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -92,7 +93,7 @@ const MainDisplay = ({ contentType }) => {
           p: 5,
         }}
       >
-        Loading...
+        <CircularProgress />
       </Box>
     );
 
