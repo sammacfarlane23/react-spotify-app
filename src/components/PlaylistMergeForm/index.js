@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FormGroup from "@mui/material/FormGroup";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -12,8 +12,7 @@ import { makeStyles } from "@mui/styles";
 import flatten from "lodash/flatten";
 import uniq from "lodash/uniq";
 import { Grid, Paper } from "@mui/material";
-import Confetti from "react-confetti";
-import useWindowSize from "react-use/lib/useWindowSize";
+import Confetti from "react-dom-confetti";
 
 import Modal from "../Modal";
 import spotifyApi from "../../spotifyFunctions";
@@ -150,9 +149,9 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [newPlaylist, setNewPlaylist] = useState(null);
+  const [fireConfetti, setFireConfetti] = useState(false);
   const [error, setError] = useState("");
-  const [windowHeight, setWindowHeight] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(0);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const secondPlaylist = getNextPlaylistOrFirst(items, 1);
@@ -160,11 +159,6 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
     { ...items[0] },
     { ...secondPlaylist },
   ]);
-
-  useEffect(() => {
-    setWindowHeight(window.innerHeight);
-    setWindowWidth(window.innerWidth);
-  }, []);
 
   const handleModalDismiss = () => {
     handleClose();
@@ -231,6 +225,7 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
       .getPlaylist(response.id)
       .then((playlist) => {
         setNewPlaylist(playlist);
+        setTimeout(() => setFireConfetti(true), 500);
       })
       .catch((err) => {
         console.log(err);
@@ -421,8 +416,12 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        disablePortal={true}
+        disableEnforceFocus={true}
         className={classes.playlistMergeModal}
       >
+        <Confetti active={fireConfetti} duration={8000} />
+
         {!newPlaylist ? (
           <>
             <Typography
@@ -456,12 +455,7 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
         ) : (
           <>
             {/* @TODO: Get confetti coming from correct place */}
-            <Confetti
-              recycle={false}
-              numberOfPieces={400}
-              width={windowWidth}
-              height={windowHeight}
-            />
+
             <Typography
               variant="h1"
               color="white"

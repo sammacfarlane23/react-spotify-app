@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 
-const InfoModal = ({ open, handleClose, children, className }) => {
+const InfoModal = ({ open, handleClose, children, className, ...rest }) => {
   return (
     <Modal
       open={open}
@@ -10,6 +10,7 @@ const InfoModal = ({ open, handleClose, children, className }) => {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       className={className}
+      {...rest}
     >
       <Box
         sx={{
@@ -24,6 +25,7 @@ const InfoModal = ({ open, handleClose, children, className }) => {
           borderRadius: 3,
           boxShadow: 24,
           p: 4,
+          outline: 0,
         }}
       >
         {children}
