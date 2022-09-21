@@ -10,9 +10,10 @@ const ItemImage = ({ item, index, src, className }) => {
 
   const artistNames = item.artists?.map(({ name }) => name);
   const artists = item.artists ? `by ${listify(artistNames)}` : "";
-  const description = index
-    ? `${index}. ${item.name} ${artists}`
-    : `${item.name} ${artists}`;
+  const description =
+    index !== undefined
+      ? `${index + 1}. ${item.name} ${artists}`
+      : `${item.name} ${artists}`;
 
   return (
     <Link

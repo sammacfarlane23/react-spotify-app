@@ -18,6 +18,20 @@ import Modal from "../Modal";
 import spotifyApi from "../../spotifyFunctions";
 import ItemImage from "../ItemImage";
 
+const confettiConfig = {
+  angle: 90,
+  spread: 360,
+  startVelocity: 40,
+  elementCount: 70,
+  dragFriction: 0.12,
+  duration: 5000,
+  stagger: 2,
+  width: "10px",
+  height: "10px",
+  perspective: "500px",
+  colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"],
+};
+
 const useStyles = makeStyles((theme) => ({
   textFieldRoot: {
     "& .MuiOutlinedInput-root": {
@@ -166,8 +180,6 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
     setNewPlaylist(null);
   };
 
-  /* @TODO Fix this up to work with infinite number of playlists and need to check for duplicate tracks, 
-  add some error handling and then improve the UX massively */
   const createNewPlaylist = async (playlists) => {
     // Validation fully written by copilot based on error state names
     if (!playlistName) {
@@ -225,11 +237,13 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
       .getPlaylist(response.id)
       .then((playlist) => {
         setNewPlaylist(playlist);
-        setTimeout(() => setFireConfetti(true), 500);
+        setTimeout(() => setFireConfetti(true), 800);
       })
       .catch((err) => {
         console.log(err);
       });
+
+    setFireConfetti(false);
 
     return;
   };
@@ -420,15 +434,13 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
         disableEnforceFocus={true}
         className={classes.playlistMergeModal}
       >
-        <Confetti active={fireConfetti} duration={8000} />
-
         {!newPlaylist ? (
           <>
             <Typography
               variant="h1"
               color="white"
               className={classes.playlistMergeText}
-              sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}
+              sx={{ fontSize: 26, fontWeight: "bold", textAlign: "center" }}
             >
               Merging your playlists...
             </Typography>
@@ -454,17 +466,26 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
           </>
         ) : (
           <>
-            {/* @TODO: Get confetti coming from correct place */}
-
             <Typography
-              variant="h1"
+              component="h1"
               color="white"
               className={classes.playlistMergeText}
-              sx={{ fontSize: 25, fontWeight: "bold", textAlign: "center" }}
+              sx={{
+                fontSize: 26,
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
             >
-              🎉{"   "}Here is your new playlist{"   "}🎉
+              Here is your new playlist
             </Typography>
-            <Box mt={5}>
+
+            <Box
+              mt={5}
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+            >
               <Grid
                 container={true}
                 spacing={2}
@@ -474,25 +495,41 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
                 className={classes.mergeContainer}
               >
                 <Box>
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: "40%",
+                      left: "40%",
+                    }}
+                  >
+                    <Confetti active={fireConfetti} config={confettiConfig} />
+                  </Box>
+
                   <ItemImage
                     item={newPlaylist}
                     src={newPlaylist.images[0].url}
                   />
                 </Box>
-
-                <Box>
-                  <Button color="primary" variant="contained">
-                    View on Spotify
-                  </Button>
-                  <Button
-                    color="primary"
-                    variant="outlined"
-                    onClick={() => handleModalDismiss()}
-                  >
-                    Dismiss
-                  </Button>
-                </Box>
               </Grid>
+              <Box
+                mt={3}
+                display="flex"
+                flexDirection="column"
+                width="100%"
+                maxWidth="70%"
+              >
+                <Button color="primary" variant="contained">
+                  View on Spotify
+                </Button>
+                <Button
+                  color="primary"
+                  variant="outlined"
+                  onClick={() => handleModalDismiss()}
+                  sx={{ mt: 2 }}
+                >
+                  Dismiss
+                </Button>
+              </Box>
             </Box>
           </>
         )}
