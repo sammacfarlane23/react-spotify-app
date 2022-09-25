@@ -1,3 +1,4 @@
+import { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -17,7 +18,6 @@ import Cookies from "js-cookie";
 import { Link, navigate } from "@reach/router";
 
 import navConfig from "./config";
-import { useState } from "react";
 
 const ResponsiveAppBar = () => {
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
@@ -84,6 +84,7 @@ const ResponsiveAppBar = () => {
               <Box
                 sx={{
                   width: 250,
+                  color: "black",
                 }}
                 role="presentation"
                 onClick={toggleDrawer(false)}

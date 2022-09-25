@@ -457,7 +457,7 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
                     <ItemImage
                       item={playlist}
                       index={index}
-                      src={playlist.images[0].url}
+                      src={playlist.images?.[0].url}
                     />
                   </Grid>
                 ))}

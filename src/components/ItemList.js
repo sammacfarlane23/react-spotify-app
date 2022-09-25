@@ -9,7 +9,7 @@ const ItemList = ({ topList }) => {
         display: "flex",
         flexWrap: "wrap",
         maxWidth: 1,
-        p: 0.5,
+        // p: 0.5,
         m: 1,
       }}
     >
