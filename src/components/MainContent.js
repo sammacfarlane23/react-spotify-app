@@ -119,7 +119,7 @@ const MainDisplay = ({ contentType }) => {
       >
         {timeFrameMessage && (
           <Box sx={{ my: 4, color: "#fff" }}>
-            <Typography variant="h4">
+            <Typography variant="h4" fontWeight="500">
               {timeFrameMessage}
               {contentType !== PLAYLISTS && (
                 <>
