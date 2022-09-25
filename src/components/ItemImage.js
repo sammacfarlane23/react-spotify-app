@@ -61,7 +61,7 @@ const ItemImage = ({ item, index, src, className }) => {
           m: 0,
           maxWidth: 130,
           textAlign: "center",
-          fontWeight: "500",
+          fontWeight: { xs: "500", md: "400" },
         }}
         aria-owns={open ? "mouse-over-popover" : undefined}
         aria-haspopup="true"
