@@ -8,9 +8,7 @@ const ItemList = ({ topList }) => {
       sx={{
         display: "flex",
         flexWrap: "wrap",
-        maxWidth: 1,
-        p: 0.5,
-        m: 1,
+        justifyContent: { xs: "center", md: "flex-start" },
       }}
     >
       {topList.map((topItem, index) => {

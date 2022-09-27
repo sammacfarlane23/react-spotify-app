@@ -12,6 +12,7 @@ export const redirectUrlToSpotifyForLogin = () => {
     "user-read-email",
     "user-read-playback-state",
     "user-top-read",
+    "playlist-modify-private",
   ];
 
   return (

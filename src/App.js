@@ -34,9 +34,9 @@ const App = () => {
         {loggedIn ? (
           <>
             <ArtistsPage path="/" />
-            <TracksPage path="/tracks" />
-            <PlaylistsPage path="/playlists" />
-            <LoginPage path="/login" />
+            <TracksPage path="tracks" />
+            <PlaylistsPage path="playlists" />
+            <LoginPage path="login" />
             <NotFoundPage default />
           </>
         ) : (
