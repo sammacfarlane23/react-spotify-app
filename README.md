@@ -6,11 +6,10 @@ I built this app when I could not find an easy way to merge mutliple playlists o
 
 <img width="150" alt="Screenshot 2022-11-27 at 18 27 36" src="https://user-images.githubusercontent.com/50931982/204153029-4d6c3d02-c9aa-4ebe-a461-ee4b59f6931e.png">
 
-# Technologies
+## Technologies
 
-- React
-- MUI
+<img src="https://cdn.worldvectorlogo.com/logos/logo-javascript.svg" alt="JavaScript Logo" width="50" height="50"/> <img src="https://cdn.worldvectorlogo.com/logos/react-2.svg" alt="React Logo" width="50" height="50"/> <img src="https://cdn.worldvectorlogo.com/logos/material-ui-1.svg" alt="Material UI Logo" width="50" height="50"/>
 
-This is a React app that uses the Spotify API to get a user's top tracks and artists on Spotify and lets them merge multiple playlists into one
+This is a React app that uses the Spotify API to fetch user and update user data and it uses Material UI for styling
 
 Live demo [here](https://my-top-spotify.netlify.app/)
