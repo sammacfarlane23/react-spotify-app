@@ -49,40 +49,48 @@ export const contentTypes = [TRACKS, ARTISTS, PLAYLISTS];
 
 const MainDisplay = ({ contentType }) => {
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [timeFrame, setTimeFrame] = useState(SHORT_TERM.slug);
   const [timeFrameMessage, setTimeFrameMessage] = useState("");
-  const [playlistName, setPlaylistName] = useState("");
   const dispatch = useDispatch();
   const playlistsEnabled = JSON.parse(process.env.REACT_APP_PLAYLISTS_ENABLED);
 
   const items = useSelector((state) => state.items.data);
 
   useEffect(() => {
-    if (contentType === TRACKS) {
-      dispatch(getTopTracks({ timeFrame }));
-    }
+    // @TODO Surely this can be improved
+    const getItems = async () => {
+      setIsLoading(true);
+      if (contentType === TRACKS) {
+        const response = await dispatch(getTopTracks({ timeFrame }));
+        if (response) setIsLoading(false);
+      }
 
-    if (contentType === ARTISTS) {
-      dispatch(getTopArtists({ timeFrame }));
-    }
+      if (contentType === ARTISTS) {
+        const response = await dispatch(getTopArtists({ timeFrame }));
+        if (response) setIsLoading(false);
+      }
 
-    if (contentType === PLAYLISTS) {
-      setTimeFrameMessage("Your playlists");
-      dispatch(getUserPlaylists());
-      return;
-    }
+      if (contentType === PLAYLISTS) {
+        setTimeFrameMessage("Your playlists");
+        const response = await dispatch(getUserPlaylists());
+        if (response) setIsLoading(false);
+        return;
+      }
 
-    setTimeFrameMessage(
-      `Your top ${contentType} of ${
-        find(timeFrames, { slug: timeFrame }).period
-      }`
-    );
+      setTimeFrameMessage(
+        `Your top ${contentType} of ${
+          find(timeFrames, { slug: timeFrame }).period
+        }`
+      );
+    };
+
+    getItems();
   }, [timeFrame, dispatch, contentType]);
 
-  // @TODO Use actual loading spinner
-  if (isEmpty(items))
+  if (isEmpty(items) || isLoading) {
     return (
       <Box
         sx={{
@@ -96,6 +104,7 @@ const MainDisplay = ({ contentType }) => {
         <CircularProgress />
       </Box>
     );
+  }
 
   if (contentType === PLAYLISTS && !playlistsEnabled) {
     return <PlaylistLandingPage />;
@@ -103,15 +112,7 @@ const MainDisplay = ({ contentType }) => {
 
   return (
     <>
-      {contentType === PLAYLISTS && (
-        <PlaylistMergeForm
-          {...{
-            items,
-            playlistName,
-            setPlaylistName,
-          }}
-        />
-      )}
+      {contentType === PLAYLISTS && <PlaylistMergeForm items={items} />}
       <Box
         sx={{
           px: 3,
@@ -176,6 +177,7 @@ const MainDisplay = ({ contentType }) => {
               variant="contained"
               onClick={() => {
                 setTimeFrame(slug);
+                setIsLoading(true);
                 handleClose();
               }}
             >

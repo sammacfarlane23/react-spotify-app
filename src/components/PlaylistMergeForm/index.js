@@ -103,25 +103,14 @@ const useStyles = makeStyles((theme) => ({
     to: {
       position: "absolute",
       top: "50%",
-      // left: "50%",
     },
   },
   playlistMergeItem: {
     animationName: "$blinker",
     animationDuration: "1s",
     animationTimingFunction: "in",
-    // animationTimingFunction: "ease-in-out",
     animationIterationCount: "infinite",
   },
-  // "@keyframes containerMerge": {
-  //   from: { width: "100%" },
-  //   to: { width: "50%" },
-  // },
-  // mergeContainer: {
-  //   animationName: "$containerMerge",
-  //   animationDuration: "1s",
-  //   animationIterationCount: "infinite",
-  // },
 }));
 
 const getNextPlaylistOrFirst = (items, index) => {
@@ -159,20 +148,24 @@ const getPlaylistTracks = async (playlistId) => {
   return tracks.items;
 };
 
-const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
+const PlaylistMergeForm = ({ items }) => {
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [playlistName, setPlaylistName] = useState("");
   const [newPlaylist, setNewPlaylist] = useState(null);
   const [fireConfetti, setFireConfetti] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [validationError, setValidationError] = useState("");
+  const [mergeError, setMergeError] = useState(false);
   const secondPlaylist = getNextPlaylistOrFirst(items, 1);
   const [playlists, setPlaylists] = useState([
     { ...items[0] },
     { ...secondPlaylist },
   ]);
+
+  console.log({ mergeError, newPlaylist });
+
+  const handleOpen = () => setModalIsOpen(true);
+  const handleClose = () => setModalIsOpen(false);
 
   const handleModalDismiss = () => {
     handleClose();
@@ -183,23 +176,30 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
   const createNewPlaylist = async (playlists) => {
     // Validation fully written by copilot based on error state names
     if (!playlistName) {
-      setError("Please enter a name for your new playlist");
+      setValidationError("Please enter a name for your new playlist");
       return;
     }
 
     if (playlists.length < 2) {
-      setError("Please add at least two playlists to merge");
+      setValidationError("Please add at least two playlists to merge");
       return;
     }
 
     handleOpen();
     const { id } = await spotifyApi.getMe();
 
+    if (!id) {
+      setMergeError("Error getting user ID");
+      return;
+    }
+
     const response = await spotifyApi.createPlaylist(id, {
       name: playlistName,
       description: "Playlist created by Playlist Merge",
       public: false,
     });
+
+    console.log({ response });
 
     const allPlaylistTracks = flatten(
       await Promise.all(
@@ -291,7 +291,7 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
             label="New playlist name"
             value={playlistName}
             onChange={(e) => {
-              setError("");
+              setValidationError("");
               setPlaylistName(e.target.value);
             }}
             placeholder="A great name for your new playlist..."
@@ -299,12 +299,12 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
             sx={{ backgroundColor: "#414141", mb: 5 }}
           />
 
-          {error && (
+          {validationError && (
             <FormHelperText
               sx={{ position: "absolute", top: 270, fontSize: 12 }}
               error={true}
             >
-              {error}
+              {validationError}
             </FormHelperText>
           )}
 
@@ -394,7 +394,7 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
             className={classes.addPlaylistButton}
             variant="outlined"
             onClick={() => {
-              setError("");
+              setValidationError("");
               const nextOrFirstPlaylist = getNextPlaylistOrFirst(
                 items,
                 playlists.length
@@ -426,7 +426,7 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
         </Box>
       </Paper>
       <Modal
-        open={open}
+        open={modalIsOpen}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
@@ -435,35 +435,74 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
         className={classes.playlistMergeModal}
       >
         {!newPlaylist ? (
-          <>
-            <Typography
-              variant="h1"
-              color="white"
-              className={classes.playlistMergeText}
-              sx={{ fontSize: 26, fontWeight: "bold", textAlign: "center" }}
-            >
-              Merging your playlists...
-            </Typography>
-            <Box mt={5}>
-              <Grid
-                container={true}
-                spacing={2}
-                flexDirection="row"
-                justifyContent="center"
-                className={classes.mergeContainer}
+          mergeError ? (
+            <>
+              <Typography
+                variant="h1"
+                color="white"
+                className={classes.playlistMergeText}
+                sx={{ fontSize: 26, fontWeight: "bold", textAlign: "center" }}
               >
-                {playlists.map((playlist, index) => (
-                  <Grid item={true} className={classes.playlistMergeItem}>
-                    <ItemImage
-                      item={playlist}
-                      index={index}
-                      src={playlist.images?.[0].url}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-          </>
+                Error: {mergeError}
+                <br />
+                Please try again...
+              </Typography>
+              <Box
+                mt={5}
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Box
+                  mt={3}
+                  display="flex"
+                  flexDirection="column"
+                  width="100%"
+                  maxWidth="70%"
+                >
+                  <Button
+                    color="primary"
+                    variant="outlined"
+                    onClick={() => handleModalDismiss()}
+                    sx={{ mt: 2 }}
+                  >
+                    Dismiss
+                  </Button>
+                </Box>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Typography
+                variant="h1"
+                color="white"
+                className={classes.playlistMergeText}
+                sx={{ fontSize: 26, fontWeight: "bold", textAlign: "center" }}
+              >
+                Merging your playlists...
+              </Typography>
+              <Box mt={5}>
+                <Grid
+                  container={true}
+                  spacing={2}
+                  flexDirection="row"
+                  justifyContent="center"
+                  className={classes.mergeContainer}
+                >
+                  {playlists.map((playlist, index) => (
+                    <Grid item={true} className={classes.playlistMergeItem}>
+                      <ItemImage
+                        item={playlist}
+                        index={index}
+                        src={playlist.images?.[0].url}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            </>
+          )
         ) : (
           <>
             <Typography
@@ -486,31 +525,29 @@ const PlaylistMergeForm = ({ items, playlistName, setPlaylistName }) => {
               justifyContent="center"
               alignItems="center"
             >
-              <Grid
-                container={true}
-                spacing={2}
+              <Box
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
                 className={classes.mergeContainer}
               >
-                <Box>
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: "40%",
-                      left: "40%",
-                    }}
-                  >
-                    <Confetti active={fireConfetti} config={confettiConfig} />
-                  </Box>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "40%",
+                    left: "40%",
+                  }}
+                >
+                  <Confetti active={fireConfetti} config={confettiConfig} />
+                </Box>
 
+                <Box mt={-2}>
                   <ItemImage
                     item={newPlaylist}
                     src={newPlaylist.images[0].url}
                   />
                 </Box>
-              </Grid>
+              </Box>
               <Box
                 mt={3}
                 display="flex"
