@@ -1,14 +1,22 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import Popover from "@mui/material/Popover";
 import listify from "listify";
 
-const ItemImage = ({ item, index, src, className }) => {
+type ItemImageProps = {
+  item: SpotifyApi.TrackObjectFull | SpotifyApi.AlbumObjectFull;
+  index?: number;
+  className?: string;
+};
+
+const ItemImage = ({ item, index, className }: ItemImageProps) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handlePopoverOpen = (event) => {
+  const handlePopoverOpen = (event: {
+    currentTarget: React.SetStateAction<null>;
+  }): void => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -50,7 +58,7 @@ const ItemImage = ({ item, index, src, className }) => {
           m: { xs: "0 0.3rem", md: 0 },
         }}
         style={{
-          backgroundImage: `url(${src})`,
+          backgroundImage: `url(${"album" in item ? item.album.images[0].url : item.images[0].url})`,
           transition: "background 600ms ease-in 500ms",
         }}
       />

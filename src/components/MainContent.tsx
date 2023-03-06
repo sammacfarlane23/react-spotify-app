@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -47,7 +47,11 @@ export const timeFrames = [SHORT_TERM, MEDIUM_TERM, LONG_TERM];
 
 export const contentTypes = [TRACKS, ARTISTS, PLAYLISTS];
 
-const MainDisplay = ({ contentType }) => {
+type MainDisplayProps = {
+  contentType: "tracks" | "artists" | "playlists";
+};
+
+const MainDisplay = ({ contentType }: MainDisplayProps) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -57,7 +61,11 @@ const MainDisplay = ({ contentType }) => {
   const dispatch = useDispatch();
   const playlistsEnabled = JSON.parse(process.env.REACT_APP_PLAYLISTS_ENABLED);
 
-  const items = useSelector((state) => state.items.data);
+  const items = useSelector((state: {
+    items: {
+      data: SpotifyApi.TrackObjectFull[] | SpotifyApi.AlbumObjectFull[];
+    };
+  }) => state.items.data);
 
   useEffect(() => {
     // @TODO Surely this can be improved
@@ -65,18 +73,18 @@ const MainDisplay = ({ contentType }) => {
       setIsLoading(true);
       if (contentType === TRACKS) {
         const response = await dispatch(getTopTracks({ timeFrame }));
-        if (response) setIsLoading(false);
+        setIsLoading(false);
       }
 
       if (contentType === ARTISTS) {
         const response = await dispatch(getTopArtists({ timeFrame }));
-        if (response) setIsLoading(false);
+        setIsLoading(false);
       }
 
       if (contentType === PLAYLISTS) {
         setTimeFrameMessage("Your playlists");
         const response = await dispatch(getUserPlaylists());
-        if (response) setIsLoading(false);
+        setIsLoading(false);
         return;
       }
 
